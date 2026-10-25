@@ -9,5 +9,13 @@
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#080d18",
-  "theme_color": "#00ff9c"
+  "theme_color": "#00ff9c",
+  "icons": [
+    {
+      "src": "/neon-snake/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
 }
