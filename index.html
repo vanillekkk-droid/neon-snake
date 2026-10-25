@@ -269,7 +269,6 @@ function draw(){
   ctx.fillRect(p.x*CELL+2,p.y*CELL+2,16,16);
  });
 
- // Pause und Game Over erscheinen im Spielfeld statt als Pop-up.
  if(paused||gameOver){
   ctx.fillStyle="rgba(3,8,18,.82)";
   ctx.fillRect(25,125,310,110);
@@ -404,27 +403,21 @@ function changeDirection(name){
  }[name];
 
  if(!d)return;
-
- // Verhindert eine sofortige 180-Grad-Wende.
  if(d.x===-dir.x&&d.y===-dir.y)return;
-
  nextDir=d;
 }
 
 function resumeDirection(name){
- // Nach Game Over startet die Richtungstaste eine neue Runde.
  if(gameOver){
   start(name);
   return;
  }
 
- // Richtungstaste startet ein noch nicht gestartetes Spiel.
  if(!running&&!paused){
   start(name);
   return;
  }
 
- // Während der Pause zuerst Richtung setzen, dann sofort fortsetzen.
  if(paused){
   changeDirection(name);
   paused=false;
