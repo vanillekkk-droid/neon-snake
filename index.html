@@ -3,143 +3,99 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#080d18">
-<title>Neon Snake 2.0</title>
+<title>Neon Snake Arcade</title>
 <style>
-:root {
-  --bg:#080d18;
-  --panel:#111b2d;
-  --green:#00ff9c;
-  --muted:#9aabc3;
-  --border:#293d54;
-}
+:root{--neon:#00ff9c;--bg:#080d18;--panel:#111b2d;--border:#293d54}
 *{box-sizing:border-box}
-body{
-  margin:0;padding:20px 12px 32px;
-  background:radial-gradient(ellipse at top,#172b40,var(--bg) 72%);
-  color:#f3f7ff;font-family:system-ui,Arial,sans-serif;
-  text-align:center;min-height:100vh
-}
-main{max-width:620px;margin:auto}
-h1{
-  color:var(--green);font-size:clamp(2.2rem,9vw,3.4rem);
-  margin:4px 0;text-shadow:0 0 22px #00ff9c70
-}
-.subtitle{color:var(--muted);margin:0 0 20px}
-.panel{
-  background:var(--panel);border:1px solid var(--border);
-  border-radius:15px;padding:14px
-}
-.stats{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:8px;margin-bottom:12px
-}
-.label{font-size:.72rem;color:var(--muted)}
-.value{font-size:1.4rem;font-weight:800;color:var(--green)}
-canvas{
-  display:block;width:100%;height:auto;
-  border:2px solid var(--green);border-radius:13px;
-  background:#060b13;box-shadow:0 0 24px #00ff9c20;
-  touch-action:none
-}
-.message{min-height:46px;padding:12px 2px;color:#cfdbec}
-button{
-  border:1px solid #38516b;border-radius:11px;
-  padding:12px 15px;background:#18283c;color:white;
-  font-size:1rem;font-weight:700;cursor:pointer;
-  touch-action:manipulation
-}
+body{margin:0;padding:16px 12px 30px;background:radial-gradient(ellipse at top,#172b40,var(--bg) 72%);color:#f3f7ff;font-family:system-ui,Arial,sans-serif;text-align:center;min-height:100vh}
+main{max-width:600px;margin:auto}
+h1{color:var(--neon);font-size:clamp(2rem,9vw,3rem);margin:4px 0;text-shadow:0 0 22px #00ff9c70}
+.sub{color:#9aabc3;margin:0 0 16px;font-size:.85rem}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:15px;padding:12px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:10px}
+.label{font-size:.68rem;color:#9aabc3}
+.val{font-size:1.3rem;font-weight:800;color:var(--neon)}
+canvas{display:block;width:100%;height:auto;border:2px solid var(--neon);border-radius:13px;background:#060b13;box-shadow:0 0 22px #00ff9c20;touch-action:none}
+.message{min-height:43px;padding:10px 2px;color:#cfdbec;font-size:.9rem}
+button{border:1px solid #38516b;border-radius:10px;padding:11px 13px;background:#18283c;color:white;font-size:.91rem;font-weight:700;cursor:pointer;touch-action:manipulation}
 button:active{transform:scale(.97)}
-button.primary{background:var(--green);color:#06140e;border-color:var(--green)}
-button:disabled{opacity:.45;cursor:default}
-.actions{
-  display:flex;justify-content:center;flex-wrap:wrap;
-  gap:8px;margin:8px 0 15px
-}
-.controls{
-  display:grid;grid-template-columns:repeat(3,58px);
-  justify-content:center;gap:7px;margin:14px auto 22px
-}
-.controls button{padding:12px 0;font-size:1.25rem}
+button.primary{background:var(--neon);color:#06140e;border-color:var(--neon)}
+button:disabled{opacity:.4}
+.actions{display:flex;justify-content:center;flex-wrap:wrap;gap:7px;margin:7px 0 13px}
+.controls{display:grid;grid-template-columns:repeat(3,58px);justify-content:center;gap:7px;margin:13px auto 19px}
+.controls button{padding:12px 0;font-size:1.2rem}
 .empty{visibility:hidden}
-.section-title{color:var(--green);margin:0 0 12px;font-size:1.2rem}
-.leaderboard{text-align:left;margin-top:14px}
-.score-row{
-  display:flex;justify-content:space-between;gap:8px;
-  padding:10px 2px;border-bottom:1px solid #29384c
-}
-.score-row:first-of-type{color:#ffe082}
-.rank{width:35px;color:var(--muted)}
-.points{font-weight:800;white-space:nowrap}
-.muted{color:var(--muted);font-size:.86rem;line-height:1.6}
-.overlay{
-  position:fixed;inset:0;z-index:5;
-  display:flex;align-items:center;justify-content:center;
-  padding:20px;background:#050912eF;
-}
-.dialog{
-  width:100%;max-width:390px;padding:24px;
-  background:#111b2d;border:1px solid var(--green);
-  border-radius:20px;box-shadow:0 0 35px #00ff9c20
-}
-.dialog h2{color:var(--green);margin:0 0 10px}
+h2{color:var(--neon);font-size:1.1rem;margin:0 0 12px}
+.section{margin-top:13px;text-align:left}
+.section h2{text-align:left}
+.skin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.skin{padding:10px 8px;text-align:left;min-width:0}
+.skin.selected{border-color:var(--neon);box-shadow:inset 0 0 0 1px var(--neon)}
+.swatch{display:inline-block;width:13px;height:13px;border-radius:50%;margin-right:5px;vertical-align:-2px}
+.skin-name{font-weight:800}
+.skin-info{display:block;color:#9aabc3;font-size:.77rem;margin-top:5px}
+.score-row,.statline{display:flex;justify-content:space-between;gap:8px;padding:9px 1px;border-bottom:1px solid var(--border)}
+.muted{color:#9aabc3;font-size:.82rem;line-height:1.6}
+.overlay{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:18px;background:#050912ed}
+.dialog{width:100%;max-width:380px;padding:23px;background:#111b2d;border:1px solid var(--neon);border-radius:20px;box-shadow:0 0 35px #00ff9c25}
+.dialog h2{text-align:center;font-size:1.5rem;margin:0 0 10px}
 .dialog p{color:#c4d1e2;line-height:1.5}
-.dialog .actions{margin-top:20px}
+.dialog .actions{margin-top:18px}
 .hidden{display:none!important}
-.statline{
-  display:flex;justify-content:space-between;
-  padding:9px 0;border-bottom:1px solid var(--border)
-}
 </style>
 </head>
 <body>
 <main>
-  <h1>🐍 Neon Snake</h1>
-  <p class="subtitle">VERSION 2.0 · EAT. GROW. BEAT YOUR RECORD.</p>
+<h1>🐍 Neon Snake</h1>
+<p class="sub">ARCADE EDITION · EAT · COLLECT · UNLOCK</p>
 
-  <div class="stats">
-    <div class="panel"><div class="label">PUNKTE</div><div id="score" class="value">0</div></div>
-    <div class="panel"><div class="label">REKORD</div><div id="best" class="value">0</div></div>
-    <div class="panel"><div class="label">STATUS</div><div id="status" class="value" style="font-size:1rem">Bereit</div></div>
-  </div>
+<div class="stats">
+  <div class="panel"><div class="label">PUNKTE</div><div class="val" id="score">0</div></div>
+  <div class="panel"><div class="label">🪙 MÜNZEN</div><div class="val" id="coins">0</div></div>
+  <div class="panel"><div class="label">REKORD</div><div class="val" id="best">0</div></div>
+</div>
 
-  <canvas id="game" width="360" height="360"></canvas>
-  <div id="message" class="message">Bereit für deine nächste Runde?</div>
+<canvas id="game" width="360" height="360" aria-label="Neon Snake Spielfeld"></canvas>
+<div class="message" id="message">Sammle Äpfel und goldene Münzen!</div>
 
-  <div class="actions">
-    <button class="primary" id="start">▶ Spielen</button>
-    <button id="pause" disabled>Ⅱ Pause</button>
-    <button id="sound">🔊 Sound: An</button>
-    <button id="statsButton">📊 Statistik</button>
-  </div>
+<div class="actions">
+  <button class="primary" id="start">▶ Spielen</button>
+  <button id="pause" disabled>Ⅱ Pause</button>
+  <button id="sound">🔊 Sound: An</button>
+  <button id="statsBtn">📊 Statistik</button>
+</div>
 
-  <div class="controls">
-    <button class="empty" tabindex="-1"> </button>
-    <button data-dir="up" aria-label="Nach oben">⬆️</button>
-    <button class="empty" tabindex="-1"> </button>
-    <button data-dir="left" aria-label="Nach links">⬅️</button>
-    <button data-dir="down" aria-label="Nach unten">⬇️</button>
-    <button data-dir="right" aria-label="Nach rechts">➡️</button>
-  </div>
+<div class="controls">
+  <button class="empty" tabindex="-1"> </button>
+  <button data-dir="up" aria-label="Nach oben">⬆️</button>
+  <button class="empty" tabindex="-1"> </button>
+  <button data-dir="left" aria-label="Nach links">⬅️</button>
+  <button data-dir="down" aria-label="Nach unten">⬇️</button>
+  <button data-dir="right" aria-label="Nach rechts">➡️</button>
+</div>
 
-  <section class="panel leaderboard">
-    <h2 class="section-title">🏆 Bestenliste – Top 5</h2>
-    <div id="scores"></div>
-  </section>
-  <p class="muted">
-    Steuerung: Pfeiltasten, WASD oder Bildschirmtasten.<br>
-    Auf dem Handy kannst du über das Spielfeld wischen.<br>
-    Ein Apfel = 10 Punkte.
-  </p>
+<section class="panel section">
+  <h2>🎨 Skin-Shop</h2>
+  <p class="muted">Wähle deine Schlange. Neue Skins kaufst du mit gesammelten Münzen.</p>
+  <div id="shop" class="skin-grid"></div>
+</section>
+
+<section class="panel section">
+  <h2>🏆 Bestenliste – Top 5</h2>
+  <div id="leaderboard"></div>
+</section>
+<p class="muted">Steuerung: Bildschirmtasten, Wischen, Pfeiltasten oder WASD.<br>
+Ein Apfel = 10 Punkte · Eine Münze = 5 Münzen im Shop.</p>
 </main>
 
 <div id="overlay" class="overlay">
   <div class="dialog">
-    <h2 id="dialogTitle">NEON SNAKE</h2>
-    <p id="dialogText">Bereit für eine neue Runde? Sammle Äpfel, wachse und verbessere deinen Rekord!</p>
+    <h2 id="dialogTitle">🐍 NEON SNAKE</h2>
+    <p id="dialogText">Willkommen in der Arcade! Sammle Äpfel, hol dir goldene Münzen und schalte neue Skins frei.</p>
     <div class="actions">
-      <button id="dialogPlay" class="primary">▶ Spiel starten</button>
+      <button class="primary" id="dialogPlay">▶ Spiel starten</button>
       <button id="dialogClose">Schließen</button>
     </div>
   </div>
@@ -150,39 +106,56 @@ button:disabled{opacity:.45;cursor:default}
 "use strict";
 
 const $ = id => document.getElementById(id);
-const canvas = $("game");
-const ctx = canvas.getContext("2d");
-const CELL = 20, COUNT = 18;
+const canvas = $("game"), ctx = canvas.getContext("2d");
+const CELL = 20, N = 18;
 
-let snake = [];
-let food = {x:12,y:9};
-let dir = {x:1,y:0};
-let nextDir = {x:1,y:0};
-let score = 0, best = 0, apples = 0, rounds = 0;
-let running = false, paused = false, soundOn = true;
-let timer = null, audio = null, roundSaved = false;
-let leaderboard = [];
+const SKINS = [
+  {id:"green",name:"Neon Grün",color:"#00ff9c",price:0},
+  {id:"blue",name:"Cyber Blau",color:"#36a3ff",price:15},
+  {id:"purple",name:"Laser Lila",color:"#c56bff",price:30},
+  {id:"gold",name:"Gold Rush",color:"#ffd34d",price:50},
+  {id:"pink",name:"Hot Pink",color:"#ff4fc8",price:80},
+  {id:"ice",name:"Eis Kristall",color:"#b7f5ff",price:120}
+];
 
-function loadData(){
+let snake=[], food={x:12,y:9}, coin={x:14,y:14};
+let dir={x:1,y:0}, nextDir={x:1,y:0};
+let score=0, coins=0, best=0, totalApples=0, totalRounds=0;
+let running=false, paused=false, soundOn=true;
+let timer=null, audio=null, roundSaved=false;
+let owned=["green"], selected="green", leaderboard=[];
+
+function load(){
   try{
-    best = Math.max(0,Number(localStorage.getItem("neonSnakeHighscore"))||0);
-    apples = Math.max(0,Number(localStorage.getItem("neonSnakeApples"))||0);
-    rounds = Math.max(0,Number(localStorage.getItem("neonSnakeRounds"))||0);
-    const a = JSON.parse(localStorage.getItem("neonSnakeScores")||"[]");
-    leaderboard = Array.isArray(a) ? a.filter(x=>x && Number.isFinite(x.score) && x.score>0).slice(0,5) : [];
-    if(leaderboard.length) best = Math.max(best,leaderboard[0].score);
-  }catch(e){ leaderboard=[]; }
-}
+    coins=Math.max(0,Number(localStorage.getItem("nsa_coins"))||0);
+    best=Math.max(0,Number(localStorage.getItem("neonSnakeHighscore"))||0);
+    totalApples=Math.max(0,Number(localStorage.getItem("nsa_apples"))||0);
+    totalRounds=Math.max(0,Number(localStorage.getItem("nsa_rounds"))||0);
 
-function persist(){
-  try{
-    localStorage.setItem("neonSnakeHighscore",String(best));
-    localStorage.setItem("neonSnakeApples",String(apples));
-    localStorage.setItem("neonSnakeRounds",String(rounds));
-    localStorage.setItem("neonSnakeScores",JSON.stringify(leaderboard));
+    const o=JSON.parse(localStorage.getItem("nsa_owned")||'["green"]');
+    if(Array.isArray(o)) owned=[...new Set(["green",...o.filter(id=>SKINS.some(s=>s.id===id))])];
+
+    const s=localStorage.getItem("nsa_selected");
+    selected=owned.includes(s)?s:"green";
+
+    const l=JSON.parse(localStorage.getItem("neonSnakeScores")||"[]");
+    if(Array.isArray(l)) leaderboard=l.filter(x=>x&&Number.isFinite(x.score)&&x.score>0).slice(0,5);
+    if(leaderboard.length) best=Math.max(best,leaderboard[0].score);
   }catch(e){}
 }
-
+function save(){
+  try{
+    localStorage.setItem("nsa_coins",String(coins));
+    localStorage.setItem("neonSnakeHighscore",String(best));
+    localStorage.setItem("nsa_apples",String(totalApples));
+    localStorage.setItem("nsa_rounds",String(totalRounds));
+    localStorage.setItem("nsa_owned",JSON.stringify(owned));
+    localStorage.setItem("nsa_selected",selected);
+    localStorage.setItem("neonSnakeScores",JSON.stringify(leaderboard));
+  }catch(e){
+    $("message").textContent="Speichern nicht möglich. Prüfe deine Browsereinstellungen.";
+  }
+}
 function tone(freq=600,duration=.1,type="sine"){
   if(!soundOn)return;
   try{
@@ -190,8 +163,8 @@ function tone(freq=600,duration=.1,type="sine"){
     if(!AC)return;
     if(!audio)audio=new AC();
     if(audio.state==="suspended")audio.resume().catch(()=>{});
-    const osc=audio.createOscillator(), gain=audio.createGain();
-    osc.type=type; osc.frequency.value=freq;
+    const osc=audio.createOscillator(),gain=audio.createGain();
+    osc.type=type;osc.frequency.value=freq;
     gain.gain.setValueAtTime(.0001,audio.currentTime);
     gain.gain.exponentialRampToValueAtTime(.1,audio.currentTime+.015);
     gain.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+duration);
@@ -199,258 +172,252 @@ function tone(freq=600,duration=.1,type="sine"){
     osc.start();osc.stop(audio.currentTime+duration+.02);
   }catch(e){}
 }
-
-function updateUI(){
+function update(){
   $("score").textContent=score;
+  $("coins").textContent=coins;
   $("best").textContent=best;
-  $("status").textContent=paused?"Pause":running?"Spielt":"Bereit";
-  $("pause").textContent=paused?"▶ Weiter":"Ⅱ Pause";
   $("pause").disabled=!running&&!paused;
+  $("pause").textContent=paused?"▶ Weiter":"Ⅱ Pause";
 }
-
-function renderScores(){
-  const root=$("scores");
-  root.replaceChildren();
-  if(!leaderboard.length){
-    const row=document.createElement("div");
-    row.className="score-row";
-    row.textContent="Noch keine Einträge. Starte deine erste Runde!";
-    root.appendChild(row);
-    return;
-  }
-  leaderboard.forEach((item,i)=>{
-    const row=document.createElement("div");
-    row.className="score-row";
-    const rank=document.createElement("span");
-    rank.className="rank";
-    rank.textContent=["🥇","🥈","🥉","4.","5."][i];
-    const date=document.createElement("span");
-    date.textContent=typeof item.date==="string"?item.date:"Rekord";
-    const pts=document.createElement("span");
-    pts.className="points";
-    pts.textContent=item.score+" Punkte";
-    row.append(rank,date,pts);
-    root.appendChild(row);
+function randomSpot(){
+  let p,tries=0;
+  do{
+    p={x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)};
+    tries++;
+  }while((snake.some(s=>s.x===p.x&&s.y===p.y)||
+    (food&&p.x===food.x&&p.y===food.y))&&tries<500);
+  return p;
+}
+function placeFood(){food=randomSpot();}
+function placeCoin(){coin=randomSpot();}
+function renderShop(){
+  const root=$("shop");root.replaceChildren();
+  SKINS.forEach(s=>{
+    const ownedSkin=owned.includes(s.id);
+    const chosen=selected===s.id;
+    const btn=document.createElement("button");
+    btn.className="skin"+(chosen?" selected":"");
+    const name=document.createElement("span");
+    name.className="skin-name";
+    const dot=document.createElement("span");
+    dot.className="swatch";dot.style.background=s.color;
+    name.append(dot,document.createTextNode(s.name));
+    const info=document.createElement("span");
+    info.className="skin-info";
+    info.textContent=chosen?"✓ Ausgewählt":ownedSkin?"✓ Freigeschaltet":`🪙 ${s.price} Münzen`;
+    btn.append(name,info);
+    btn.addEventListener("click",()=>useSkin(s));
+    root.appendChild(btn);
   });
 }
-
-function placeFood(){
-  let tries=0;
-  do{
-    food={x:Math.floor(Math.random()*COUNT),y:Math.floor(Math.random()*COUNT)};
-    tries++;
-  }while(snake.some(p=>p.x===food.x&&p.y===food.y)&&tries<1000);
+function useSkin(s){
+  if(owned.includes(s.id)){
+    selected=s.id;save();renderShop();draw();
+    $("message").textContent=s.name+" ausgewählt!";
+    tone(700,.07);
+    return;
+  }
+  if(coins<s.price){
+    $("message").textContent=`Dir fehlen noch ${s.price-coins} Münzen für ${s.name}.`;
+    tone(200,.12,"triangle");
+    return;
+  }
+  coins-=s.price;owned.push(s.id);selected=s.id;
+  save();renderShop();update();draw();
+  $("message").textContent=`🎉 ${s.name} freigeschaltet!`;
+  tone(880,.16);
 }
-
+function renderLeaderboard(){
+  const root=$("leaderboard");root.replaceChildren();
+  if(!leaderboard.length){
+    const row=document.createElement("div");row.className="score-row";
+    row.textContent="Noch keine Rekorde – starte deine erste Runde!";
+    root.appendChild(row);return;
+  }
+  leaderboard.forEach((entry,i)=>{
+    const row=document.createElement("div");row.className="score-row";
+    const rank=document.createElement("span");
+    rank.textContent=["🥇","🥈","🥉","4.","5."][i];
+    const date=document.createElement("span");
+    date.textContent=typeof entry.date==="string"?entry.date:"Rekord";
+    const pts=document.createElement("strong");pts.textContent=entry.score+" Punkte";
+    row.append(rank,date,pts);root.appendChild(row);
+  });
+}
 function draw(){
-  ctx.fillStyle="#060b13";
-  ctx.fillRect(0,0,360,360);
-  ctx.strokeStyle="#142234";
-  ctx.lineWidth=.5;
-  for(let i=0;i<=COUNT;i++){
+  ctx.fillStyle="#060b13";ctx.fillRect(0,0,360,360);
+  ctx.strokeStyle="#142234";ctx.lineWidth=.5;
+  for(let i=0;i<=N;i++){
     ctx.beginPath();ctx.moveTo(i*CELL,0);ctx.lineTo(i*CELL,360);ctx.stroke();
     ctx.beginPath();ctx.moveTo(0,i*CELL);ctx.lineTo(360,i*CELL);ctx.stroke();
   }
 
-  ctx.save();
-  ctx.shadowColor="#ff3864";ctx.shadowBlur=16;ctx.fillStyle="#ff3864";
-  ctx.beginPath();
-  ctx.arc(food.x*CELL+10,food.y*CELL+10,7,0,Math.PI*2);
-  ctx.fill();ctx.restore();
+  // Apfel
+  ctx.save();ctx.shadowColor="#ff3864";ctx.shadowBlur=14;ctx.fillStyle="#ff3864";
+  ctx.beginPath();ctx.arc(food.x*CELL+10,food.y*CELL+10,7,0,Math.PI*2);ctx.fill();ctx.restore();
 
+  // Goldene Münze
+  ctx.save();ctx.shadowColor="#ffd34d";ctx.shadowBlur=17;
+  ctx.fillStyle="#ffd34d";ctx.beginPath();
+  ctx.arc(coin.x*CELL+10,coin.y*CELL+10,7,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle="#805500";ctx.font="bold 11px system-ui";
+  ctx.textAlign="center";ctx.textBaseline="middle";
+  ctx.fillText("¢",coin.x*CELL+10,coin.y*CELL+10);
+  ctx.restore();
+
+  const skin=SKINS.find(s=>s.id===selected)||SKINS[0];
   snake.forEach((p,i)=>{
-    ctx.save();
-    ctx.shadowColor="#00ff9c";ctx.shadowBlur=i===0?15:5;
-    ctx.fillStyle=i===0?"#b3ffe0":"#00d987";
+    ctx.save();ctx.shadowColor=skin.color;ctx.shadowBlur=i===0?15:5;
+    ctx.fillStyle=i===0?"#ffffff":skin.color;
+    ctx.globalAlpha=i===0?1:.9;
     ctx.fillRect(p.x*CELL+2,p.y*CELL+2,CELL-4,CELL-4);
     ctx.restore();
   });
-
-  if(!running&&!paused&&snake.length){
-    ctx.fillStyle="#c9d7e8";
-    ctx.font="bold 16px system-ui";ctx.textAlign="center";
-    ctx.fillText("RUNDE BEENDET",180,190);
-  }
 }
-
 function reset(){
   snake=[{x:8,y:9},{x:7,y:9},{x:6,y:9}];
-  dir={x:1,y:0};nextDir={x:1,y:0};
-  score=0;roundSaved=false;
-  placeFood();updateUI();draw();
+  dir={x:1,y:0};nextDir={x:1,y:0};score=0;
+  roundSaved=false;placeFood();placeCoin();update();draw();
 }
-
 function start(){
   if(running)return;
-  if(timer){clearInterval(timer);timer=null;}
+  stopTimer();reset();paused=false;running=true;
   $("overlay").classList.add("hidden");
-  reset();paused=false;running=true;
-  $("message").textContent="Los geht's! Sammle die roten Äpfel.";
+  $("message").textContent="Los geht's! Äpfel geben Punkte, Münzen geben Shop-Guthaben.";
   $("start").textContent="↻ Neustart";
-  updateUI();
-  timer=setInterval(tick,125);
+  update();timer=setInterval(tick,125);
 }
-
-function stopTimer(){
-  if(timer){clearInterval(timer);timer=null;}
-}
-
+function stopTimer(){if(timer){clearInterval(timer);timer=null;}}
 function finish(){
   running=false;paused=false;stopTimer();
-  rounds++;
-  if(score>0){
-    leaderboard.push({score,date:new Date().toLocaleDateString("de-DE")});
-    leaderboard.sort((a,b)=>b.score-a.score);
-    leaderboard=leaderboard.slice(0,5);
+  if(!roundSaved){
+    totalRounds++;
+    if(score>0){
+      leaderboard.push({score,date:new Date().toLocaleDateString("de-DE")});
+      leaderboard.sort((a,b)=>b.score-a.score);
+      leaderboard=leaderboard.slice(0,5);
+    }
+    best=Math.max(best,score);roundSaved=true;save();
   }
-  if(score>best)best=score;
-  roundSaved=true;persist();renderScores();updateUI();draw();
-  $("message").textContent="Game Over! Deine Punktzahl: "+score;
+  renderLeaderboard();update();draw();
+  $("message").textContent="Game Over! Du hast "+score+" Punkte erreicht.";
   $("dialogTitle").textContent="💥 GAME OVER";
-  $("dialogText").textContent="Du hast "+score+" Punkte erreicht. Dein Rekord: "+best+" Punkte. Bereit für die nächste Runde?";
+  $("dialogText").textContent=`Punkte: ${score} · Münzen: ${coins} · Rekord: ${best}`;
   $("dialogPlay").textContent="↻ Nochmal spielen";
   $("overlay").classList.remove("hidden");
   tone(170,.3,"sawtooth");
 }
-
 function tick(){
   dir=nextDir;
   const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
   const eating=head.x===food.x&&head.y===food.y;
-  if(head.x<0||head.x>=COUNT||head.y<0||head.y>=COUNT){
-    finish();return;
-  }
-  const body=eating?snake:snake.slice(0,-1);
-  if(body.some(p=>p.x===head.x&&p.y===head.y)){
-    finish();return;
-  }
+  const collecting=head.x===coin.x&&head.y===coin.y;
+
+  if(head.x<0||head.x>=N||head.y<0||head.y>=N){finish();return;}
+  const body=(eating||collecting)?snake:snake.slice(0,-1);
+  if(body.some(p=>p.x===head.x&&p.y===head.y)){finish();return;}
+
   snake.unshift(head);
   if(eating){
-    score+=10;apples++;
+    score+=10;totalApples++;
     if(score>best)best=score;
     placeFood();tone(660,.09);
-    persist();
-  }else snake.pop();
-  updateUI();draw();
+    $("message").textContent="+10 Punkte!";
+  }
+  if(collecting){
+    coins+=5;placeCoin();tone(950,.13,"triangle");
+    $("message").textContent="🪙 +5 Münzen! Shop-Guthaben gesammelt.";
+  }
+  if(!eating&&!collecting)snake.pop();
+  update();draw();
+  if(eating||collecting)save();
 }
-
-function setDirection(name){
-  const dirs={
-    up:{x:0,y:-1},down:{x:0,y:1},
-    left:{x:-1,y:0},right:{x:1,y:0}
-  };
-  const candidate=dirs[name];
-  if(!candidate)return;
-  if(candidate.x===-dir.x&&candidate.y===-dir.y)return;
-  nextDir=candidate;
+function changeDirection(name){
+  const dirs={up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}};
+  const c=dirs[name];if(!c)return;
+  if(c.x===-dir.x&&c.y===-dir.y)return;
+  nextDir=c;
 }
-
 function togglePause(){
-  if(!running&&!paused)return;
   if(running){
     running=false;paused=true;stopTimer();
-    $("message").textContent="Spiel pausiert. Du kannst jederzeit fortsetzen.";
     $("dialogTitle").textContent="⏸ PAUSE";
-    $("dialogText").textContent="Dein Spiel wartet auf dich. Möchtest du weiterspielen?";
+    $("dialogText").textContent="Dein Fortschritt ist sicher. Möchtest du weiterspielen?";
     $("dialogPlay").textContent="▶ Weiter";
     $("overlay").classList.remove("hidden");
   }else if(paused){
-    paused=false;running=true;
-    $("overlay").classList.add("hidden");
-    $("message").textContent="Weiter geht's!";
+    paused=false;running=true;$("overlay").classList.add("hidden");
     timer=setInterval(tick,125);
+    $("message").textContent="Weiter geht's!";
   }
-  updateUI();
+  update();
 }
-
 function showStats(){
   $("dialogTitle").textContent="📊 Deine Statistik";
-  $("dialogText").innerHTML="";
-  const entries=[
-    ["Persönlicher Rekord",best+" Punkte"],
-    ["Äpfel insgesamt",apples],
-    ["Beendete Runden",rounds],
-    ["Punkte dieser Runde",score]
-  ];
-  entries.forEach(([label,value])=>{
-    const row=document.createElement("div");
-    row.className="statline";
+  $("dialogText").replaceChildren();
+  [["Rekord",best+" Punkte"],["Münz-Guthaben",coins],
+   ["Äpfel gesammelt",totalApples],["Gespielte Runden",totalRounds],
+   ["Freigeschaltete Skins",owned.length+" / "+SKINS.length],
+   ["Punkte dieser Runde",score]].forEach(([label,value])=>{
+    const row=document.createElement("div");row.className="statline";
     const a=document.createElement("span");a.textContent=label;
     const b=document.createElement("strong");b.textContent=value;
     row.append(a,b);$("dialogText").appendChild(row);
   });
-  $("dialogPlay").textContent="▶ Spielen";
+  $("dialogPlay").textContent=paused?"▶ Weiter":"▶ Spielen";
   $("overlay").classList.remove("hidden");
 }
-
 $("start").addEventListener("click",()=>{
-  if(running){
-    stopTimer();running=false;paused=false;start();
-  }else start();
+  if(running){stopTimer();running=false;paused=false;start();}
+  else start();
 });
 $("pause").addEventListener("click",togglePause);
 $("sound").addEventListener("click",()=>{
-  soundOn=!soundOn;
-  $("sound").textContent=soundOn?"🔊 Sound: An":"🔇 Sound: Aus";
+  soundOn=!soundOn;$("sound").textContent=soundOn?"🔊 Sound: An":"🔇 Sound: Aus";
   if(soundOn)tone(650,.1);
 });
-$("statsButton").addEventListener("click",showStats);
+$("statsBtn").addEventListener("click",showStats);
 $("dialogPlay").addEventListener("click",()=>{
-  if(paused){togglePause();return;}
-  start();
+  if(paused){togglePause();return;}start();
 });
 $("dialogClose").addEventListener("click",()=>{
   $("overlay").classList.add("hidden");
   if(!running&&!paused){
-    $("dialogTitle").textContent="NEON SNAKE";
-    $("dialogText").textContent="Bereit für eine neue Runde? Sammle Äpfel, wachse und verbessere deinen Rekord!";
+    $("dialogTitle").textContent="🐍 NEON SNAKE";
+    $("dialogText").textContent="Sammle Äpfel, Münzen und schalte neue Skins frei!";
     $("dialogPlay").textContent="▶ Spiel starten";
   }
 });
-document.querySelectorAll("[data-dir]").forEach(button=>{
-  button.addEventListener("click",()=>{
+document.querySelectorAll("[data-dir]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
     if(!running&&!paused)start();
-    if(running)setDirection(button.dataset.dir);
+    if(running)changeDirection(btn.dataset.dir);
   });
 });
 document.addEventListener("keydown",e=>{
-  const map={
-    ArrowUp:"up",w:"up",W:"up",
-    ArrowDown:"down",s:"down",S:"down",
-    ArrowLeft:"left",a:"left",A:"left",
-    ArrowRight:"right",d:"right",D:"right"
-  };
+  const map={ArrowUp:"up",w:"up",W:"up",ArrowDown:"down",s:"down",S:"down",
+    ArrowLeft:"left",a:"left",A:"left",ArrowRight:"right",d:"right",D:"right"};
   if(map[e.key]){
     e.preventDefault();
     if(!running&&!paused)start();
-    if(running)setDirection(map[e.key]);
+    if(running)changeDirection(map[e.key]);
   }else if(e.code==="Space"){
     e.preventDefault();
-    if(running||paused)togglePause();
-    else start();
-  }else if(e.key==="Escape"&&(running||paused)){
-    togglePause();
-  }
+    if(running||paused)togglePause();else start();
+  }else if(e.key==="Escape"&&(running||paused))togglePause();
 });
 
 let sx=0,sy=0;
-canvas.addEventListener("pointerdown",e=>{
-  sx=e.clientX;sy=e.clientY;
-});
+canvas.addEventListener("pointerdown",e=>{sx=e.clientX;sy=e.clientY;});
 canvas.addEventListener("pointerup",e=>{
   const dx=e.clientX-sx,dy=e.clientY-sy;
   if(Math.max(Math.abs(dx),Math.abs(dy))<18)return;
   if(!running&&!paused)start();
   if(!running)return;
-  setDirection(Math.abs(dx)>Math.abs(dy)
-    ?(dx>0?"right":"left")
-    :(dy>0?"down":"up"));
+  changeDirection(Math.abs(dx)>Math.abs(dy)?(dx>0?"right":"left"):(dy>0?"down":"up"));
 });
 
-loadData();
-renderScores();
-reset();
-$("overlay").classList.remove("hidden");
+load();renderShop();renderLeaderboard();reset();
 })();
 </script>
 </body>
