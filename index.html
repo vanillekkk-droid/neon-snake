@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -20,7 +19,7 @@ h1{margin:2px;color:var(--n);font-size:clamp(1.5rem,6vw,2.2rem);line-height:1.1;
 .panel{background:var(--p);border:1px solid #293d54;border-radius:10px;padding:4px;text-align:center}
 .label{color:#9aabc3;font-size:.62rem}
 .val{color:var(--n);font-size:1.2rem;font-weight:800}
-.board{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center}
+.board{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;position:relative}
 canvas{width:min(100%,calc(100dvh - 300px),430px);height:auto;max-height:100%;aspect-ratio:1;border:2px solid var(--n);border-radius:12px;background:#060b13;touch-action:none}
 #message{flex:none;min-height:22px;text-align:center;font-size:.75rem;color:#cfdbec}
 .actions{width:100%;max-width:430px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;flex:none}
@@ -56,18 +55,22 @@ button.primary{background:var(--n);color:#06140e}
 <body>
 <div id="app">
 <header><h1>🐍 Neon Snake</h1><div class="sub">ARCADE EDITION · EAT · COLLECT · UNLOCK</div></header>
+
 <div class="stats">
  <div class="panel"><div class="label">PUNKTE</div><div class="val" id="score">0</div></div>
  <div class="panel"><div class="label">🪙 MÜNZEN</div><div class="val" id="coins">0</div></div>
  <div class="panel"><div class="label">REKORD</div><div class="val" id="best">0</div></div>
 </div>
+
 <div class="board"><canvas id="game" width="360" height="360"></canvas></div>
 <div id="message">Tippe auf Spielen oder eine Richtungstaste.</div>
+
 <div class="actions">
  <button class="primary" id="start">▶ Spielen</button>
  <button id="sound">🔊 Sound: An</button>
  <button id="menuBtn">☰ Menü</button>
 </div>
+
 <div class="controls">
  <button data-dir="up" aria-label="Oben">⬆️</button>
  <button data-dir="left" aria-label="Links">⬅️</button>
@@ -78,48 +81,67 @@ button.primary{background:var(--n);color:#06140e}
 </div>
 
 <div id="menu" class="hidden">
-<div class="dialog">
-<h2 id="title">🐍 Neon Snake</h2>
-<div id="content"></div>
-<div style="margin-top:12px;display:flex;gap:8px">
-<button id="back" class="hidden">← Zurück</button>
-<button id="close" class="primary">Schließen</button>
-</div>
-</div>
+ <div class="dialog">
+  <h2 id="title">🐍 Neon Snake</h2>
+  <div id="content"></div>
+  <div style="margin-top:12px;display:flex;gap:8px">
+   <button id="back" class="hidden">← Zurück</button>
+   <button id="close" class="primary">Schließen</button>
+  </div>
+ </div>
 </div>
 
 <script>
 (()=>{
 "use strict";
+
 const $=id=>document.getElementById(id);
-const canvas=$("game"),ctx=canvas.getContext("2d");
+const canvas=$("game");
+const ctx=canvas.getContext("2d");
 const N=18,CELL=20;
+
 const skins=[
-{id:"green",name:"Neon Grün",color:"#00ff9c",price:0},
-{id:"blue",name:"Cyber Blau",color:"#36a3ff",price:15},
-{id:"purple",name:"Laser Lila",color:"#c56bff",price:30},
-{id:"gold",name:"Gold Rush",color:"#ffd34d",price:50},
-{id:"pink",name:"Hot Pink",color:"#ff4fc8",price:80},
-{id:"ice",name:"Eis Kristall",color:"#b7f5ff",price:120}
+ {id:"green",name:"Neon Grün",color:"#00ff9c",price:0},
+ {id:"blue",name:"Cyber Blau",color:"#36a3ff",price:15},
+ {id:"purple",name:"Laser Lila",color:"#c56bff",price:30},
+ {id:"gold",name:"Gold Rush",color:"#ffd34d",price:50},
+ {id:"pink",name:"Hot Pink",color:"#ff4fc8",price:80},
+ {id:"ice",name:"Eis Kristall",color:"#b7f5ff",price:120}
 ];
-const getNum=(key)=>Math.max(0,Number(localStorage.getItem(key))||0);
+
+const getNum=key=>Math.max(0,Number(localStorage.getItem(key))||0);
+
 let coins=0,best=0,totalApples=0,totalRounds=0;
 let owned=["green"],selected="green",scores=[];
-let snake=[],food,coin,dir={x:1,y:0},nextDir={x:1,y:0};
-let score=0,running=false,paused=false,soundOn=true,timer=null,audio=null,saved=false;
+let snake=[],food,coin;
+let dir={x:1,y:0},nextDir={x:1,y:0};
+let score=0,running=false,paused=false,gameOver=false;
+let soundOn=true,timer=null,audio=null,saved=false;
 
 function load(){
  try{
-  coins=getNum("nsa_coins");best=getNum("neonSnakeHighscore");
-  totalApples=getNum("nsa_apples");totalRounds=getNum("nsa_rounds");
+  coins=getNum("nsa_coins");
+  best=getNum("neonSnakeHighscore");
+  totalApples=getNum("nsa_apples");
+  totalRounds=getNum("nsa_rounds");
+
   const o=JSON.parse(localStorage.getItem("nsa_owned")||'["green"]');
-  if(Array.isArray(o))owned=[...new Set(["green",...o.filter(x=>skins.some(s=>s.id===x))])];
-  const s=localStorage.getItem("nsa_selected");if(owned.includes(s))selected=s;
+  if(Array.isArray(o)){
+   owned=[...new Set(["green",...o.filter(x=>skins.some(s=>s.id===x))])];
+  }
+
+  const s=localStorage.getItem("nsa_selected");
+  if(owned.includes(s))selected=s;
+
   const l=JSON.parse(localStorage.getItem("neonSnakeScores")||"[]");
-  if(Array.isArray(l))scores=l.filter(x=>x&&Number.isFinite(x.score)&&x.score>0).sort((a,b)=>b.score-a.score).slice(0,5);
+  if(Array.isArray(l)){
+   scores=l.filter(x=>x&&Number.isFinite(x.score)&&x.score>0)
+    .sort((a,b)=>b.score-a.score).slice(0,5);
+  }
   if(scores.length)best=Math.max(best,scores[0].score);
  }catch(e){}
 }
+
 function save(){
  try{
   localStorage.setItem("nsa_coins",coins);
@@ -131,163 +153,504 @@ function save(){
   localStorage.setItem("neonSnakeScores",JSON.stringify(scores));
  }catch(e){}
 }
+
 function tone(freq=600,duration=.1){
  if(!soundOn)return;
  try{
-  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
-  if(!audio)audio=new AC();if(audio.state==="suspended")audio.resume();
-  const o=audio.createOscillator(),g=audio.createGain();
-  o.frequency.value=freq;g.gain.value=.06;o.connect(g);g.connect(audio.destination);
-  o.start();o.stop(audio.currentTime+duration);
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC)return;
+  if(!audio)audio=new AC();
+  if(audio.state==="suspended")audio.resume();
+
+  const o=audio.createOscillator();
+  const g=audio.createGain();
+  o.frequency.value=freq;
+  g.gain.value=.06;
+  o.connect(g);
+  g.connect(audio.destination);
+  o.start();
+  o.stop(audio.currentTime+duration);
  }catch(e){}
 }
+
 function update(){
- $("score").textContent=score;$("coins").textContent=coins;$("best").textContent=best;
- $("pause").textContent=running?"Ⅱ":"▶";
+ $("score").textContent=score;
+ $("coins").textContent=coins;
+ $("best").textContent=best;
+ $("pause").textContent=paused?"▶":(running?"Ⅱ":"▶");
 }
+
 function randomSpot(){
  let p,tries=0;
  do{
-  p={x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)};tries++;
- }while(tries<500&&(snake.some(s=>s.x===p.x&&s.y===p.y)||(food&&p.x===food.x&&p.y===food.y)||(coin&&p.x===coin.x&&p.y===coin.y)));
+  p={x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)};
+  tries++;
+ }while(
+  tries<500&&(
+   snake.some(s=>s.x===p.x&&s.y===p.y)||
+   (food&&p.x===food.x&&p.y===food.y)||
+   (coin&&p.x===coin.x&&p.y===coin.y)
+  )
+ );
  return p;
 }
+
 function reset(first="right"){
- const d={up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}}[first]||{x:1,y:0};
- dir={...d};nextDir={...d};score=0;saved=false;
- const h={x:8,y:9};snake=[h,{x:h.x-d.x,y:h.y-d.y},{x:h.x-2*d.x,y:h.y-2*d.y}];
- food=randomSpot();coin=randomSpot();update();draw();
+ const d={
+  up:{x:0,y:-1},
+  down:{x:0,y:1},
+  left:{x:-1,y:0},
+  right:{x:1,y:0}
+ }[first]||{x:1,y:0};
+
+ dir={...d};
+ nextDir={...d};
+ score=0;
+ saved=false;
+ paused=false;
+ gameOver=false;
+
+ const h={x:8,y:9};
+ snake=[
+  h,
+  {x:h.x-d.x,y:h.y-d.y},
+  {x:h.x-2*d.x,y:h.y-2*d.y}
+ ];
+
+ food=null;
+ coin=null;
+ food=randomSpot();
+ coin=randomSpot();
+ update();
+ draw();
 }
+
 function draw(){
- ctx.fillStyle="#060b13";ctx.fillRect(0,0,360,360);
- ctx.strokeStyle="#142234";ctx.lineWidth=.5;
+ ctx.fillStyle="#060b13";
+ ctx.fillRect(0,0,360,360);
+ ctx.strokeStyle="#142234";
+ ctx.lineWidth=.5;
+
  for(let i=0;i<=N;i++){
-  ctx.beginPath();ctx.moveTo(i*CELL,0);ctx.lineTo(i*CELL,360);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(0,i*CELL);ctx.lineTo(360,i*CELL);ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(i*CELL,0);
+  ctx.lineTo(i*CELL,360);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(0,i*CELL);
+  ctx.lineTo(360,i*CELL);
+  ctx.stroke();
  }
- ctx.fillStyle="#ff3864";ctx.shadowColor="#ff3864";ctx.shadowBlur=12;
- ctx.beginPath();ctx.arc(food.x*CELL+10,food.y*CELL+10,7,0,Math.PI*2);ctx.fill();
- ctx.fillStyle="#ffd34d";ctx.shadowColor="#ffd34d";
- ctx.beginPath();ctx.arc(coin.x*CELL+10,coin.y*CELL+10,7,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+
+ if(food){
+  ctx.fillStyle="#ff3864";
+  ctx.shadowColor="#ff3864";
+  ctx.shadowBlur=12;
+  ctx.beginPath();
+  ctx.arc(food.x*CELL+10,food.y*CELL+10,7,0,Math.PI*2);
+  ctx.fill();
+ }
+
+ if(coin){
+  ctx.fillStyle="#ffd34d";
+  ctx.shadowColor="#ffd34d";
+  ctx.shadowBlur=12;
+  ctx.beginPath();
+  ctx.arc(coin.x*CELL+10,coin.y*CELL+10,7,0,Math.PI*2);
+  ctx.fill();
+ }
+
+ ctx.shadowBlur=0;
  const skin=skins.find(s=>s.id===selected)||skins[0];
- snake.forEach((p,i)=>{ctx.fillStyle=i===0?"#fff":skin.color;ctx.fillRect(p.x*CELL+2,p.y*CELL+2,16,16)});
+
+ snake.forEach((p,i)=>{
+  ctx.fillStyle=i===0?"#fff":skin.color;
+  ctx.fillRect(p.x*CELL+2,p.y*CELL+2,16,16);
+ });
+
+ // Pause und Game Over erscheinen im Spielfeld statt als Pop-up.
+ if(paused||gameOver){
+  ctx.fillStyle="rgba(3,8,18,.82)";
+  ctx.fillRect(25,125,310,110);
+  ctx.strokeStyle=gameOver?"#ff3864":"#00ff9c";
+  ctx.lineWidth=2;
+  ctx.strokeRect(25,125,310,110);
+
+  ctx.textAlign="center";
+  ctx.fillStyle=gameOver?"#ff6582":"#00ff9c";
+  ctx.font="bold 27px system-ui";
+  ctx.fillText(gameOver?"GAME OVER":"PAUSE",180,169);
+
+  ctx.fillStyle="#f3f7ff";
+  ctx.font="15px system-ui";
+  ctx.fillText(
+   gameOver
+    ?"Tippe Spielen für eine neue Runde"
+    :"Richtungstaste zum Weiterspielen",
+   180,201
+  );
+ }
 }
-function stop(){if(timer){clearInterval(timer);timer=null}}
+
+function stop(){
+ if(timer){
+  clearInterval(timer);
+  timer=null;
+ }
+}
+
 function start(first="right"){
- if(running)return;
- stop();reset(first);paused=false;running=true;
- $("menu").classList.add("hidden");$("message").textContent="Los geht's! Sammle Äpfel und Münzen.";
- $("start").textContent="↻ Neustart";update();timer=setInterval(tick,125);
+ stop();
+ reset(first);
+ paused=false;
+ gameOver=false;
+ running=true;
+ $("menu").classList.add("hidden");
+ $("message").textContent="Los geht's! Sammle Äpfel und Münzen.";
+ $("start").textContent="↻ Neustart";
+ update();
+ draw();
+ timer=setInterval(tick,125);
 }
+
 function finish(){
- running=false;paused=false;stop();
+ running=false;
+ paused=false;
+ gameOver=true;
+ stop();
+
  if(!saved){
   totalRounds++;
-  if(score>0){scores.push({score,date:new Date().toLocaleDateString("de-DE")});scores.sort((a,b)=>b.score-a.score);scores=scores.slice(0,5)}
-  best=Math.max(best,score);saved=true;save();
+
+  if(score>0){
+   scores.push({
+    score,
+    date:new Date().toLocaleDateString("de-DE")
+   });
+   scores.sort((a,b)=>b.score-a.score);
+   scores=scores.slice(0,5);
+  }
+
+  best=Math.max(best,score);
+  saved=true;
+  save();
  }
- update();draw();$("message").textContent="Game Over! "+score+" Punkte.";
- openMenu("💥 Game Over",`<p>Punkte: ${score} · Rekord: ${best}</p><button id="again" class="primary">↻ Nochmal spielen</button>`);
- $("again").onclick=()=>start();
+
+ $("start").textContent="↻ Nochmal spielen";
+ $("message").textContent=
+  "Game Over! "+score+" Punkte. Tippe auf Spielen für eine neue Runde.";
+
+ update();
+ draw();
 }
+
 function tick(){
+ if(!running||paused||gameOver)return;
+
  dir=nextDir;
- const h={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
- const eat=h.x===food.x&&h.y===food.y,collect=h.x===coin.x&&h.y===coin.y;
- if(h.x<0||h.x>=N||h.y<0||h.y>=N){finish();return}
+ const h={
+  x:snake[0].x+dir.x,
+  y:snake[0].y+dir.y
+ };
+
+ const eat=h.x===food.x&&h.y===food.y;
+ const collect=h.x===coin.x&&h.y===coin.y;
+
+ if(h.x<0||h.x>=N||h.y<0||h.y>=N){
+  finish();
+  return;
+ }
+
  const body=(eat||collect)?snake:snake.slice(0,-1);
- if(body.some(p=>p.x===h.x&&p.y===h.y)){finish();return}
+
+ if(body.some(p=>p.x===h.x&&p.y===h.y)){
+  finish();
+  return;
+ }
+
  snake.unshift(h);
- if(eat){score+=10;totalApples++;best=Math.max(best,score);food=randomSpot();tone(660);$("message").textContent="+10 Punkte!"}
- if(collect){coins+=5;coin=randomSpot();tone(950);$("message").textContent="🪙 +5 Münzen!"}
+
+ if(eat){
+  score+=10;
+  totalApples++;
+  best=Math.max(best,score);
+  food=randomSpot();
+  tone(660);
+  $("message").textContent="+10 Punkte!";
+ }
+
+ if(collect){
+  coins+=5;
+  coin=randomSpot();
+  tone(950);
+  $("message").textContent="🪙 +5 Münzen!";
+ }
+
  if(!eat&&!collect)snake.pop();
- update();draw();if(eat||collect)save();
+
+ update();
+ draw();
+
+ if(eat||collect)save();
 }
+
 function changeDirection(name){
- const d={up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}}[name];
- if(!d||d.x===-dir.x&&d.y===-dir.y)return;
+ const d={
+  up:{x:0,y:-1},
+  down:{x:0,y:1},
+  left:{x:-1,y:0},
+  right:{x:1,y:0}
+ }[name];
+
+ if(!d)return;
+
+ // Verhindert eine sofortige 180-Grad-Wende.
+ if(d.x===-dir.x&&d.y===-dir.y)return;
+
  nextDir=d;
 }
+
 function resumeDirection(name){
- if(!running&&!paused){start(name);return}
- if(paused){
-  changeDirection(name);paused=false;running=true;$("menu").classList.add("hidden");
-  $("message").textContent="Weiter geht's!";timer=setInterval(tick,125);update();return;
+ // Nach Game Over startet die Richtungstaste eine neue Runde.
+ if(gameOver){
+  start(name);
+  return;
  }
+
+ // Richtungstaste startet ein noch nicht gestartetes Spiel.
+ if(!running&&!paused){
+  start(name);
+  return;
+ }
+
+ // Während der Pause zuerst Richtung setzen, dann sofort fortsetzen.
+ if(paused){
+  changeDirection(name);
+  paused=false;
+  running=true;
+  $("menu").classList.add("hidden");
+  $("message").textContent="Weiter geht's!";
+  stop();
+  timer=setInterval(tick,125);
+  update();
+  draw();
+  return;
+ }
+
  changeDirection(name);
 }
+
 function togglePause(){
+ if(gameOver){
+  start();
+  return;
+ }
+
  if(running){
-  running=false;paused=true;stop();
-  openMenu("⏸ Pause",'<p>Dein Spiel ist pausiert.</p><button id="resume" class="primary">▶ Weiter</button>');
-  $("resume").onclick=()=>{paused=false;running=true;$("menu").classList.add("hidden");timer=setInterval(tick,125);update()};
+  running=false;
+  paused=true;
+  stop();
+  $("message").textContent=
+   "Pausiert. Drücke eine Richtungstaste oder ▶ zum Weiterspielen.";
  }else if(paused){
-  paused=false;running=true;$("menu").classList.add("hidden");timer=setInterval(tick,125);
- }else start();
+  paused=false;
+  running=true;
+  $("message").textContent="Weiter geht's!";
+  stop();
+  timer=setInterval(tick,125);
+ }else{
+  start();
+ }
+
  update();
+ draw();
 }
+
 function openMenu(title,html){
- $("title").textContent=title;$("content").innerHTML=html;
- $("menu").classList.remove("hidden");$("back").classList.add("hidden");
+ $("title").textContent=title;
+ $("content").innerHTML=html;
+ $("menu").classList.remove("hidden");
+ $("back").classList.add("hidden");
 }
+
 function homeMenu(){
- openMenu("🐍 Neon Snake",'<p class="small">Wähle einen Bereich.</p><div class="grid"><button id="shopBtn">🎨 Skin-Shop</button><button id="scoresBtn">🏆 Top 5</button><button id="statsBtn">📊 Statistik</button><button id="continue">🎮 Zurück zum Spiel</button></div>');
- $("shopBtn").onclick=showShop;$("scoresBtn").onclick=showScores;$("statsBtn").onclick=showStats;
- $("continue").onclick=()=>$("menu").classList.add("hidden");
+ if(running){
+  running=false;
+  paused=true;
+  stop();
+  update();
+  draw();
+ }
+
+ openMenu(
+  "🐍 Neon Snake",
+  '<p class="small">Wähle einen Bereich.</p>'+
+  '<div class="grid">'+
+  '<button id="shopBtn">🎨 Skin-Shop</button>'+
+  '<button id="scoresBtn">🏆 Top 5</button>'+
+  '<button id="statsBtn">📊 Statistik</button>'+
+  '<button id="continue">🎮 Zurück zum Spiel</button>'+
+  '</div>'
+ );
+
+ $("shopBtn").onclick=showShop;
+ $("scoresBtn").onclick=showScores;
+ $("statsBtn").onclick=showStats;
+
+ $("continue").onclick=()=>{
+  $("menu").classList.add("hidden");
+  if(paused){
+   $("message").textContent=
+    "Pausiert. Drücke eine Richtungstaste oder ▶ zum Weiterspielen.";
+  }
+ };
 }
+
 function showShop(){
- $("title").textContent="🎨 Skin-Shop";$("back").classList.remove("hidden");
- $("content").innerHTML=`<p class="small">Münzen: ${coins}</p><div class="grid" id="skinGrid"></div>`;
+ $("title").textContent="🎨 Skin-Shop";
+ $("back").classList.remove("hidden");
+ $("content").innerHTML=
+  `<p class="small">Münzen: ${coins}</p><div class="grid" id="skinGrid"></div>`;
+
  skins.forEach(s=>{
-  const b=document.createElement("button");b.className="skin";
-  b.textContent=(selected===s.id?"✓ ":"")+s.name+" · "+(owned.includes(s.id)?"Freigeschaltet":s.price+" Münzen");
-  b.style.color=s.color;$("skinGrid").appendChild(b);
+  const b=document.createElement("button");
+  b.className="skin";
+  b.textContent=(selected===s.id?"✓ ":"")+s.name+" · "+
+   (owned.includes(s.id)?"Freigeschaltet":s.price+" Münzen");
+  b.style.color=s.color;
+  $("skinGrid").appendChild(b);
+
   b.onclick=()=>{
-   if(owned.includes(s.id)){selected=s.id}
-   else if(coins>=s.price){coins-=s.price;owned.push(s.id);selected=s.id}
-   else{$("message").textContent="Du brauchst noch "+(s.price-coins)+" Münzen.";return}
-   save();update();draw();showShop();
+   if(owned.includes(s.id)){
+    selected=s.id;
+   }else if(coins>=s.price){
+    coins-=s.price;
+    owned.push(s.id);
+    selected=s.id;
+   }else{
+    $("message").textContent="Du brauchst noch "+(s.price-coins)+" Münzen.";
+    return;
+   }
+
+   save();
+   update();
+   draw();
+   showShop();
   };
  });
 }
+
 function showScores(){
- $("title").textContent="🏆 Bestenliste – Top 5";$("back").classList.remove("hidden");
+ $("title").textContent="🏆 Bestenliste – Top 5";
+ $("back").classList.remove("hidden");
  $("content").innerHTML="";
- if(!scores.length){$("content").textContent="Noch keine Rekorde. Starte deine erste Runde!";return}
+
+ if(!scores.length){
+  $("content").textContent="Noch keine Rekorde. Starte deine erste Runde!";
+  return;
+ }
+
  scores.forEach((s,i)=>{
-  const r=document.createElement("div");r.className="row";
-  r.textContent=["🥇","🥈","🥉","4.","5."][i]+" "+s.score+" Punkte · "+(s.date||"Rekord");
+  const r=document.createElement("div");
+  r.className="row";
+  r.textContent=["🥇","🥈","🥉","4.","5."][i]+" "+
+   s.score+" Punkte · "+(s.date||"Rekord");
   $("content").appendChild(r);
  });
 }
+
 function showStats(){
- $("title").textContent="📊 Statistik";$("back").classList.remove("hidden");$("content").innerHTML="";
- [["Rekord",best+" Punkte"],["Münzen",coins],["Äpfel gesammelt",totalApples],["Gespielte Runden",totalRounds],["Skins",owned.length+" / "+skins.length],["Punkte dieser Runde",score]].forEach(([a,b])=>{
-  const r=document.createElement("div");r.className="row";r.textContent=a+" : "+b;$("content").appendChild(r);
+ $("title").textContent="📊 Statistik";
+ $("back").classList.remove("hidden");
+ $("content").innerHTML="";
+
+ [
+  ["Rekord",best+" Punkte"],
+  ["Münzen",coins],
+  ["Äpfel gesammelt",totalApples],
+  ["Gespielte Runden",totalRounds],
+  ["Skins",owned.length+" / "+skins.length],
+  ["Punkte dieser Runde",score]
+ ].forEach(([a,b])=>{
+  const r=document.createElement("div");
+  r.className="row";
+  r.textContent=a+" : "+b;
+  $("content").appendChild(r);
  });
 }
-$("start").onclick=()=>{if(running){stop();running=false;paused=false;start()}else start()};
+
+$("start").onclick=()=>{
+ if(running||paused){
+  stop();
+  running=false;
+  paused=false;
+ }
+ start();
+};
+
 $("pause").onclick=togglePause;
-$("sound").onclick=()=>{soundOn=!soundOn;$("sound").textContent=soundOn?"🔊 Sound: An":"🔇 Sound: Aus";if(soundOn)tone()};
+
+$("sound").onclick=()=>{
+ soundOn=!soundOn;
+ $("sound").textContent=soundOn?"🔊 Sound: An":"🔇 Sound: Aus";
+ if(soundOn)tone();
+};
+
 $("menuBtn").onclick=homeMenu;
 $("close").onclick=()=>$("menu").classList.add("hidden");
 $("back").onclick=homeMenu;
+
 document.querySelectorAll("[data-dir]").forEach(b=>{
- b.addEventListener("pointerdown",e=>{e.preventDefault();resumeDirection(b.dataset.dir)});
+ b.addEventListener("pointerdown",e=>{
+  e.preventDefault();
+  resumeDirection(b.dataset.dir);
+ });
 });
+
 document.addEventListener("keydown",e=>{
- const m={ArrowUp:"up",w:"up",W:"up",ArrowDown:"down",s:"down",S:"down",ArrowLeft:"left",a:"left",A:"left",ArrowRight:"right",d:"right",D:"right"};
- if(m[e.key]){e.preventDefault();resumeDirection(m[e.key])}
- else if(e.code==="Space"){e.preventDefault();togglePause()}
- else if(e.key==="Escape"&&(running||paused))togglePause();
+ const m={
+  ArrowUp:"up",w:"up",W:"up",
+  ArrowDown:"down",s:"down",S:"down",
+  ArrowLeft:"left",a:"left",A:"left",
+  ArrowRight:"right",d:"right",D:"right"
+ };
+
+ if(m[e.key]){
+  e.preventDefault();
+  resumeDirection(m[e.key]);
+ }else if(e.code==="Space"){
+  e.preventDefault();
+  togglePause();
+ }else if(e.key==="Escape"&&(running||paused)){
+  togglePause();
+ }
 });
+
 let sx=0,sy=0;
-canvas.addEventListener("pointerdown",e=>{sx=e.clientX;sy=e.clientY});
-canvas.addEventListener("pointerup",e=>{
- const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.max(Math.abs(dx),Math.abs(dy))<18)return;
- resumeDirection(Math.abs(dx)>Math.abs(dy)?(dx>0?"right":"left"):(dy>0?"down":"up"));
+
+canvas.addEventListener("pointerdown",e=>{
+ sx=e.clientX;
+ sy=e.clientY;
 });
-load();reset();update();
+
+canvas.addEventListener("pointerup",e=>{
+ const dx=e.clientX-sx;
+ const dy=e.clientY-sy;
+
+ if(Math.max(Math.abs(dx),Math.abs(dy))<18)return;
+
+ resumeDirection(
+  Math.abs(dx)>Math.abs(dy)
+   ?(dx>0?"right":"left")
+   :(dy>0?"down":"up")
+ );
+});
+
+load();
+reset();
+update();
+
 })();
 </script>
 </body>
