@@ -1,0 +1,13 @@
+
+{
+  "id": "/neon-snake/",
+  "name": "Neon Snake Arcade",
+  "short_name": "Neon Snake",
+  "description": "Ein neonfarbenes Snake-Arcade-Spiel mit Münzen, Skins und Highscores.",
+  "start_url": "/neon-snake/",
+  "scope": "/neon-snake/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#080d18",
+  "theme_color": "#00ff9c"
+}
