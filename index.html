@@ -5,8 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Neon Snake</title>
+
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -25,11 +28,16 @@
       color: #00ffcc;
       text-shadow: 0 0 15px #00ffcc;
       letter-spacing: 4px;
+      text-align: center;
     }
 
-    #score {
-      font-size: 22px;
-      margin: 8px;
+    .scores {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      font-size: 20px;
+      margin: 8px 0 16px;
     }
 
     canvas {
@@ -52,6 +60,11 @@
       font-weight: bold;
       cursor: pointer;
       margin: 8px;
+      touch-action: manipulation;
+    }
+
+    button:active {
+      transform: scale(0.96);
     }
 
     .controls {
@@ -67,57 +80,101 @@
       font-size: 22px;
     }
 
-    .empty { visibility: hidden; }
+    .empty {
+      visibility: hidden;
+    }
 
-    p { color: #cbd5e1; text-align: center; }
+    #message, .help {
+      color: #cbd5e1;
+      text-align: center;
+    }
   </style>
 </head>
+
 <body>
   <h1>NEON SNAKE</h1>
-  <div id="score">Punkte: 0</div>
+
+  <div class="scores">
+    <span id="score">Punkte: 0</span>
+    <span id="highscore">Highscore: 0</span>
+  </div>
 
   <canvas id="game" width="360" height="360"></canvas>
 
   <p id="message">Drücke Start, um zu spielen!</p>
+
   <button id="start">Start / Neustart</button>
 
   <div class="controls">
     <span class="empty"></span>
-    <button data-dir="up">▲</button>
+    <button data-dir="up" aria-label="Nach oben">▲</button>
     <span class="empty"></span>
-    <button data-dir="left">◀</button>
-    <button data-dir="down">▼</button>
-    <button data-dir="right">▶</button>
+
+    <button data-dir="left" aria-label="Nach links">◀</button>
+    <button data-dir="down" aria-label="Nach unten">▼</button>
+    <button data-dir="right" aria-label="Nach rechts">▶</button>
   </div>
 
-  <p>Sammle die roten Punkte und vermeide die Wände!</p>
+  <p class="help">
+    Sammle die roten Punkte und vermeide die Wände!
+  </p>
 
   <script>
     const canvas = document.getElementById("game");
     const ctx = canvas.getContext("2d");
+
     const scoreText = document.getElementById("score");
+    const highscoreText = document.getElementById("highscore");
     const message = document.getElementById("message");
     const startButton = document.getElementById("start");
 
     const size = 18;
     const cells = 20;
 
-    let snake, food, dx, dy, score, timer, running;
+    function loadHighscore() {
+      try {
+        return Number(
+          localStorage.getItem("neonSnakeHighscore") || 0
+        );
+      } catch (error) {
+        return 0;
+      }
+    }
+
+    let highscore = loadHighscore();
+    let snake = [];
+    let food = { x: 15, y: 10 };
+    let dx = 1;
+    let dy = 0;
+    let score = 0;
+    let timer = null;
+    let running = false;
+
+    highscoreText.textContent = "Highscore: " + highscore;
 
     function newFood() {
       let f;
+
       do {
         f = {
           x: Math.floor(Math.random() * cells),
           y: Math.floor(Math.random() * cells)
         };
-      } while (snake.some(s => s.x === f.x && s.y === f.y));
+      } while (
+        snake.some(s => s.x === f.x && s.y === f.y)
+      );
+
       return f;
     }
 
     function drawCell(x, y, color) {
       ctx.fillStyle = color;
-      ctx.fillRect(x * size + 2, y * size + 2, size - 4, size - 4);
+      ctx.fillRect(
+        x * size + 2,
+        y * size + 2,
+        size - 4,
+        size - 4
+      );
     }
 
     function draw() {
@@ -125,6 +182,8 @@
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.strokeStyle = "#1c2940";
+      ctx.lineWidth = 1;
+
       for (let i = 0; i <= cells; i++) {
         ctx.beginPath();
         ctx.moveTo(i * size, 0);
@@ -138,19 +197,29 @@
       }
 
       drawCell(food.x, food.y, "#ff3366");
-      snake.forEach((s, i) =>
-        drawCell(s.x, s.y, i === 0 ? "#ffffff" : "#00ffcc")
-      );
+
+      snake.forEach((s, i) => {
+        drawCell(
+          s.x,
+          s.y,
+          i === 0 ? "#ffffff" : "#00ffcc"
+        );
+      });
     }
 
     function endGame() {
       running = false;
       clearInterval(timer);
-      message.textContent = "Spiel vorbei! Punkte: " + score;
+      timer = null;
+      message.textContent =
+        "Spiel vorbei! Punkte: " + score;
     }
 
     function step() {
-      const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+      const head = {
+        x: snake[0].x + dx,
+        y: snake[0].y + dy
+      };
 
       if (
         head.x < 0 || head.x >= cells ||
@@ -160,10 +229,14 @@
         return;
       }
 
-      const eating = head.x === food.x && head.y === food.y;
+      const eating =
+        head.x === food.x && head.y === food.y;
+
       const body = eating ? snake : snake.slice(0, -1);
 
-      if (body.some(s => s.x === head.x && s.y === head.y)) {
+      if (
+        body.some(s => s.x === head.x && s.y === head.y)
+      ) {
         endGame();
         return;
       }
@@ -173,6 +246,22 @@
       if (eating) {
         score += 10;
         scoreText.textContent = "Punkte: " + score;
+
+        if (score > highscore) {
+          highscore = score;
+          highscoreText.textContent =
+            "Highscore: " + highscore;
+
+          try {
+            localStorage.setItem(
+              "neonSnakeHighscore",
+              String(highscore)
+            );
+          } catch (error) {
+            // Das Spiel funktioniert auch ohne Speicherung.
+          }
+        }
+
         food = newFood();
       } else {
         snake.pop();
@@ -185,36 +274,50 @@
       if (!running) return;
 
       if (direction === "up" && dy !== 1) {
-        dx = 0; dy = -1;
+        dx = 0;
+        dy = -1;
       } else if (direction === "down" && dy !== -1) {
-        dx = 0; dy = 1;
+        dx = 0;
+        dy = 1;
       } else if (direction === "left" && dx !== 1) {
-        dx = -1; dy = 0;
+        dx = -1;
+        dy = 0;
       } else if (direction === "right" && dx !== -1) {
-        dx = 1; dy = 0;
+        dx = 1;
+        dy = 0;
       }
     }
 
     function startGame() {
       clearInterval(timer);
-      snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }];
+
+      snake = [
+        { x: 10, y: 10 },
+        { x: 9, y: 10 }
+      ];
+
       dx = 1;
       dy = 0;
       score = 0;
       running = true;
+
       scoreText.textContent = "Punkte: 0";
+      highscoreText.textContent =
+        "Highscore: " + highscore;
       message.textContent = "Viel Spaß!";
+
       food = newFood();
       draw();
+
       timer = setInterval(step, 140);
     }
 
     startButton.addEventListener("click", startGame);
 
     document.querySelectorAll("[data-dir]").forEach(button => {
-      button.addEventListener("click", () =>
-        changeDirection(button.dataset.dir)
-      );
+      button.addEventListener("click", () => {
+        changeDirection(button.dataset.dir);
+      });
     });
 
     document.addEventListener("keydown", event => {
@@ -231,12 +334,11 @@
       }
     });
 
-    snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }];
-    food = { x: 15, y: 10 };
-    dx = 1;
-    dy = 0;
-    score = 0;
-    running = false;
+    snake = [
+      { x: 10, y: 10 },
+      { x: 9, y: 10 }
+    ];
+
     draw();
   </script>
 </body>
