@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#080d18">
+<title>Shadowfall – 2D Hack & Slay RPG</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080d18;color:#eaf2ff;font-family:system-ui,Arial,sans-serif;touch-action:none}
+#app{height:100dvh;display:flex;flex-direction:column;max-width:900px;margin:auto;padding:8px;gap:7px}
+header{display:flex;justify-content:space-between;align-items:center;gap:8px}
+h1{font-size:19px;margin:0;color:#7cf7ff;letter-spacing:1px}.sub{font-size:11px;color:#94a7c4}
+#stats{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.stat{background:#121c2e;border:1px solid #263954;border-radius:8px;padding:5px 8px;font-size:12px}
+.track{height:8px;background:#27344a;border-radius:8px;overflow:hidden;margin-top:3px}.fill{height:100%;width:100%;transition:width .12s}
+#hp{background:#ff4d6d}#mp{background:#45b7ff}#xp{background:#c084fc}
+#gamewrap{position:relative;flex:1;min-height:180px;border:1px solid #28425d;border-radius:12px;overflow:hidden;background:#0b1721}
+canvas{display:block;width:100%;height:100%}
+#message{position:absolute;left:50%;top:10px;transform:translateX(-50%);padding:7px 12px;border-radius:8px;background:#08111ddd;border:1px solid #34516d;font-size:12px;white-space:nowrap;max-width:95%;text-align:center}
+#overlay{position:absolute;inset:0;background:#050a12df;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px}
+#overlay.hidden{display:none}.panel{max-width:350px}.panel h2{color:#7cf7ff;margin:0 0 8px}.panel p{font-size:13px;line-height:1.5;color:#c1cfe4}
+button{border:1px solid #42617e;background:#17263b;color:#f0f7ff;border-radius:10px;padding:10px 13px;font-weight:700;font-size:13px;touch-action:manipulation}
+button:active{transform:scale(.96);background:#284765}.primary{background:#087f8c;border-color:#24d5dc}
+#controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center}
+#dpad{display:grid;grid-template-columns:repeat(3,42px);grid-template-rows:repeat(3,38px);gap:3px;justify-content:center}
+#dpad button{padding:0;font-size:18px;border-radius:9px}
+#dpad .up{grid-column:2;grid-row:1}#dpad .left{grid-column:1;grid-row:2}#dpad .down{grid-column:2;grid-row:2}#dpad .right{grid-column:3;grid-row:2}
+#actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+#attack{grid-column:1/3;background:#762f45;border-color:#ff6686;min-height:48px;font-size:15px}
+#magic{background:#253b75;border-color:#829bff}#potion{background:#245a43;border-color:#55dba0}
+#footer{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#92a7c5;gap:6px}
+@media(min-width:650px){#app{padding:12px;gap:9px}h1{font-size:22px}#controls{grid-template-columns:1fr 1fr}#dpad{grid-template-columns:repeat(3,48px);grid-template-rows:repeat(3,42px)}}
+</style>
+</head>
+<body>
+<div id="app">
+<header><div><h1>SHADOWFALL</h1><div class="sub">2D Hack & Slay · Das vergessene Tal</div></div><button id="pause">Ⅱ Pause</button></header>
+<div id="stats">
+  <div class="stat">❤️ Leben <span id="hptext"></span><div class="track"><div id="hp" class="fill"></div></div></div>
+  <div class="stat">🔷 Mana <span id="mptext"></span><div class="track"><div id="mp" class="fill"></div></div></div>
+  <div class="stat">⭐ Level <span id="leveltext"></span> · XP <span id="xptext"></span><div class="track"><div id="xp" class="fill"></div></div></div>
+  <div class="stat">🪙 Gold <b id="goldtext">0</b> · 🧪 Tränke <b id="potiontext">3</b></div>
+</div>
+<div id="gamewrap">
+<canvas id="game"></canvas>
+<div id="message">Besiege Monster und sammle Erfahrung!</div>
+<div id="overlay"><div class="panel"><h2>SHADOWFALL</h2><p>Die Dunkelheit breitet sich im vergessenen Tal aus. Besiege Monster, sammle Gold und werde stärker.</p><p><b>Steuerung:</b> Richtungstasten zum Bewegen · Angriff zum Kämpfen · Magie kostet Mana.</p><button class="primary" id="start">SPIELEN</button></div></div>
+</div>
+<div id="controls">
+  <div id="dpad">
+    <button class="up" data-dir="up" aria-label="Oben">▲</button>
+    <button class="left" data-dir="left" aria-label="Links">◀</button>
+    <button class="down" data-dir="down" aria-label="Unten">▼</button>
+    <button class="right" data-dir="right" aria-label="Rechts">▶</button>
+  </div>
+  <div id="actions">
+    <button id="attack">⚔️ ANGRIFF</button>
+    <button id="magic">✨ MAGIE</button>
+    <button id="potion">🧪 HEILEN</button>
+  </div>
+</div>
+<div id="footer"><span>WASD / Pfeile · Leertaste Angriff</span><button id="restart">↻ Neustart</button></div>
+</div>
+<script>
+(()=>{
+'use strict';
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+const $=id=>document.getElementById(id);
+let W=800,H=500,scale=1,started=false,paused=false,gameOver=false,last=0,spawnTimer=0,attackCooldown=0,magicCooldown=0,hitFlash=0;
+const keys={up:false,down:false,left:false,right:false};
+const player={x:0,y:0,r:13,hp:100,maxHp:100,mp:60,maxMp:60,level:1,xp:0,nextXp:40,gold:0,potions:3,damage:22,speed:175,dirX:1,dirY:0};
+let enemies=[],orbs=[],particles=[],floats=[];
+function resize(){
+ const rect=$('gamewrap').getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);
+ W=Math.max(280,rect.width);H=Math.max(180,rect.height);
+ canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+ canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);
+ player.x=Math.min(Math.max(player.x,25),W-25);player.y=Math.min(Math.max(player.y,25),H-25);
+}
+window.addEventListener('resize',resize);
+function say(s){$('message').textContent=s}
+function rand(a,b){return a+Math.random()*(b-a)}
+function spawnEnemy(){
+ const side=Math.floor(Math.random()*4);let x,y;
+ if(side===0){x=rand(10,W-10);y=-15}else if(side===1){x=W+15;y=rand(10,H-10)}else if(side===2){x=rand(10,W-10);y=H+15}else{x=-15;y=rand(10,H-10)}
+ const elite=Math.random()<Math.min(.12+player.level*.025,.3);
+ enemies.push({x,y,r:elite?15:11,hp:elite?55+player.level*9:30+player.level*5,maxHp:elite?55+player.level*9:30+player.level*5,damage:elite?13:7+player.level,speed:elite?42:rand(48,65)+player.level*2,elite,flash:0});
+}
+function burst(x,y,color,n=8){for(let i=0;i<n;i++){let a=Math.random()*Math.PI*2,s=rand(25,140);particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:rand(.2,.55),max:.55,color})}}
+function floatText(x,y,text,color){floats.push({x,y,text,color,life:.85})}
+function updateUI(){
+ $('hptext').textContent=Math.ceil(player.hp)+'/'+player.maxHp;$('mptext').textContent=Math.ceil(player.mp)+'/'+player.maxMp;
+ $('hp').style.width=(player.hp/player.maxHp*100)+'%';$('mp').style.width=(player.mp/player.maxMp*100)+'%';
+ $('leveltext').textContent=player.level;$('xptext').textContent=player.xp+'/'+player.nextXp;$('xp').style.width=(player.xp/player.nextXp*100)+'%';
+ $('goldtext').textContent=player.gold;$('potiontext').textContent=player.potions;
+}
+function attack(){
+ if(!started||paused||gameOver||attackCooldown>0)return;
+ attackCooldown=.32;burst(player.x+player.dirX*19,player.y+player.dirY*19,'#ffcc70',5);
+ let hit=0;
+ for(const e of enemies){
+  const dx=e.x-player.x,dy=e.y-player.y,dist=Math.hypot(dx,dy);
+  if(dist<55+e.r && (dist<1 || (dx/dist)*player.dirX+(dy/dist)*player.dirY>.15)){
+   e.hp-=player.damage;e.flash=.13;hit++;burst(e.x,e.y,'#ff6686',4);floatText(e.x,e.y-12,'-'+player.damage,'#ff9cae');
+  }
+ }
+ say(hit?'Treffer!':'Schlag ins Leere …');
+}
+function magic(){
+ if(!started||paused||gameOver||magicCooldown>0)return;
+ if(player.mp<18){say('Nicht genug Mana!');return}
+ player.mp-=18;magicCooldown=.7;
+ let count=0;
+ for(const e of enemies){if(Math.hypot(e.x-player.x,e.y-player.y)<125){e.hp-=38+player.level*3;e.flash=.15;burst(e.x,e.y,'#8d9dff',10);floatText(e.x,e.y-12,'MAGIE!','#aab7ff');count++}}
+ burst(player.x,player.y,'#7b8cff',22);say(count?'Magie trifft '+count+' Gegner!':'Magie entfesselt!');
+ updateUI();
+}
+function heal(){
+ if(!started||paused||gameOver)return;
+ if(player.potions<=0){say('Keine Heiltränke mehr!');return}
+ if(player.hp>=player.maxHp){say('Dein Leben ist bereits voll.');return}
+ player.potions--;let amount=Math.min(45,player.maxHp-player.hp);player.hp+=amount;
+ burst(player.x,player.y,'#55e6a5',12);floatText(player.x,player.y-20,'+'+amount,'#72ffb7');say('Heiltrank: +'+amount+' Leben');updateUI();
+}
+function levelUp(){
+ while(player.xp>=player.nextXp){player.xp-=player.nextXp;player.level++;player.nextXp=Math.floor(player.nextXp*1.45);player.maxHp+=15;player.hp=player.maxHp;player.maxMp+=8;player.mp=player.maxMp;player.damage+=5;player.speed+=3;player.potions++;say('LEVEL UP! Level '+player.level+' · Leben aufgefüllt');burst(player.x,player.y,'#d6a7ff',28)}
+}
+function killEnemy(e){
+ player.xp+=e.elite?22:10;let gold=Math.floor(rand(3,9))+(e.elite?10:0);player.gold+=gold;
+ floatText(e.x,e.y-15,'+'+gold+' Gold','#ffd86e');burst(e.x,e.y,e.elite?'#c08aff':'#ff6686',14);
+ if(Math.random()<.13)player.potions++;
+ levelUp();
+}
+function step(dt){
+ if(!started||paused||gameOver)return;
+ attackCooldown=Math.max(0,attackCooldown-dt);magicCooldown=Math.max(0,magicCooldown-dt);hitFlash=Math.max(0,hitFlash-dt);
+ let dx=(keys.right?1:0)-(keys.left?1:0),dy=(keys.down?1:0)-(keys.up?1:0);
+ if(dx||dy){const l=Math.hypot(dx,dy);dx/=l;dy/=l;player.x+=dx*player.speed*dt;player.y+=dy*player.speed*dt;player.dirX=dx;player.dirY=dy}
+ player.x=Math.max(player.r+3,Math.min(W-player.r-3,player.x));player.y=Math.max(player.r+3,Math.min(H-player.r-3,player.y));
+ player.mp=Math.min(player.maxMp,player.mp+dt*2.3);
+ spawnTimer+=dt;if(spawnTimer>Math.max(.65,1.8-player.level*.08)&&enemies.length<Math.min(9+player.level,20)){spawnEnemy();spawnTimer=0}
+ for(const e of enemies){
+  const dx=player.x-e.x,dy=player.y-e.y,d=Math.hypot(dx,dy)||1;
+  if(d>player.r+e.r+3){e.x+=dx/d*e.speed*dt;e.y+=dy/d*e.speed*dt}
+  else if(Math.random()<dt*1.7){player.hp-=e.damage;hitFlash=.14;floatText(player.x,player.y-18,'-'+e.damage,'#ff536e');burst(player.x,player.y,'#ff536e',3);if(player.hp<=0){player.hp=0;gameOver=true;$('overlay').classList.remove('hidden');$('overlay').innerHTML='<div class="panel"><h2>DU BIST GEFALLEN</h2><p>Level '+player.level+' · Gold '+player.gold+'<br>Das Tal wartet auf deine Rückkehr.</p><button class="primary" id="again">NOCHMAL SPIELEN</button></div>';$('again').onclick=resetGame;say('Du wurdest besiegt.');}}
+  e.flash=Math.max(0,e.flash-dt);
+ }
+ enemies=enemies.filter(e=>{if(e.hp<=0){killEnemy(e);return false}return true});
+ for(const p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=Math.pow(.1,dt);p.vy*=Math.pow(.1,dt);p.life-=dt}
+ particles=particles.filter(p=>p.life>0);
+ for(const f of floats){f.y-=24*dt;f.life-=dt}floats=floats.filter(f=>f.life>0);
+ updateUI();
+}
+function draw(){
+ ctx.clearRect(0,0,W,H);
+ ctx.fillStyle='#0b1721';ctx.fillRect(0,0,W,H);
+ // tiled dungeon floor
+ const tile=38;ctx.strokeStyle='#142737';ctx.lineWidth=1;
+ for(let x=0;x<W;x+=tile){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+ for(let y=0;y<H;y+=tile){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+ // scattered glowing runes
+ for(let i=0;i<10;i++){let x=(i*137+53)%W,y=(i*83+31)%H;ctx.strokeStyle='#153b43';ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.stroke()}
+ // enemies
+ for(const e of enemies){
+  ctx.save();ctx.translate(e.x,e.y);
+  ctx.shadowBlur=e.elite?20:12;ctx.shadowColor=e.elite?'#bd72ff':'#ff426c';
+  ctx.fillStyle=e.flash>0?'#fff':e.elite?'#9c52d8':'#d83e60';
+  ctx.beginPath();ctx.arc(0,0,e.r,0,Math.PI*2);ctx.fill();
+  ctx.shadowBlur=0;ctx.fillStyle='#210e22';ctx.beginPath();ctx.arc(-4,-2,2,0,Math.PI*2);ctx.arc(4,-2,2,0,Math.PI*2);ctx.fill();
+  if(e.elite){ctx.strokeStyle='#e2b6ff';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-8,-e.r);ctx.lineTo(-5,-e.r-7);ctx.lineTo(0,-e.r);ctx.lineTo(5,-e.r-7);ctx.lineTo(8,-e.r);ctx.stroke()}
+  ctx.fillStyle='#28141f';ctx.fillRect(-e.r,-e.r-8,e.r*2,3);ctx.fillStyle='#ff536e';ctx.fillRect(-e.r,-e.r-8,e.r*2*Math.max(0,e.hp/e.maxHp),3);
+  ctx.restore();
+ }
+ // particles
+ for(const p of particles){ctx.globalAlpha=Math.max(0,p.life/p.max);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,2.5,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;
+ // hero glow
+ ctx.save();ctx.translate(player.x,player.y);ctx.shadowBlur=20;ctx.shadowColor=hitFlash?'#ff3154':'#35f4ed';
+ ctx.fillStyle=hitFlash?'#ff9baa':'#4de6e2';ctx.beginPath();ctx.arc(0,0,player.r,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+ ctx.fillStyle='#102b3c';ctx.beginPath();ctx.arc(player.dirX*5-3,player.dirY*5-3,2.5,0,Math.PI*2);ctx.fill();
+ ctx.strokeStyle='#e8ffff';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(player.dirX*8,player.dirY*8);ctx.lineTo(player.dirX*19,player.dirY*19);ctx.stroke();
+ ctx.restore();
+ for(const f of floats){ctx.globalAlpha=Math.min(1,f.life/.3);ctx.fillStyle=f.color;ctx.font='bold 12px system-ui';ctx.textAlign='center';ctx.fillText(f.text,f.x,f.y)}ctx.globalAlpha=1;
+ if(!started){ctx.fillStyle='#c3d4e8';ctx.font='13px system-ui';ctx.textAlign='center';ctx.fillText('Bereit, Abenteurer?',W/2,H-20)}
+ if(paused&&started&&!gameOver){ctx.fillStyle='#06101ac9';ctx.fillRect(0,0,W,H);ctx.fillStyle='#eaf6ff';ctx.font='bold 28px system-ui';ctx.textAlign='center';ctx.fillText('PAUSE',W/2,H/2)}
+}
+function loop(t){const dt=Math.min((t-last)/1000||0,.04);last=t;step(dt);draw();requestAnimationFrame(loop)}
+function resetGame(){
+ player.x=W/2;player.y=H/2;player.hp=100;player.maxHp=100;player.mp=60;player.maxMp=60;player.level=1;player.xp=0;player.nextXp=40;player.gold=0;player.potions=3;player.damage=22;player.speed=175;player.dirX=1;player.dirY=0;
+ enemies=[];particles=[];floats=[];spawnTimer=0;attackCooldown=0;magicCooldown=0;paused=false;gameOver=false;started=true;
+ $('overlay').classList.add('hidden');$('pause').textContent='Ⅱ Pause';say('Los geht’s! Besiege die Monster.');updateUI();
+}
+$('start').onclick=resetGame;$('restart').onclick=()=>{resetGame()};$('attack').addEventListener('pointerdown',e=>{e.preventDefault();attack()});$('magic').addEventListener('pointerdown',e=>{e.preventDefault();magic()});$('potion').addEventListener('pointerdown',e=>{e.preventDefault();heal()});
+$('pause').onclick=()=>{if(!started||gameOver)return;paused=!paused;$('pause').textContent=paused?'▶ Weiter':'Ⅱ Pause';say(paused?'Spiel pausiert':'Weiter geht’s!')};
+document.querySelectorAll('[data-dir]').forEach(b=>{
+ const dir=b.dataset.dir;
+ const on=e=>{e.preventDefault();keys[dir]=true};
+ const off=e=>{e.preventDefault();keys[dir]=false};
+ b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointercancel',off);b.addEventListener('pointerleave',off);
+});
+window.addEventListener('keydown',e=>{
+ const k=e.key.toLowerCase();let dir={arrowup:'up',w:'up',arrowdown:'down',s:'down',arrowleft:'left',a:'left',arrowright:'right',d:'right'}[k];
+ if(dir){keys[dir]=true;e.preventDefault()}if(k===' '){attack();e.preventDefault()}if(k==='j')attack();if(k==='k')magic();if(k==='h')heal();if(k==='escape'||k==='p')$('pause').click();
+});
+window.addEventListener('keyup',e=>{const k=e.key.toLowerCase();let dir={arrowup:'up',w:'up',arrowdown:'down',s:'down',arrowleft:'left',a:'left',arrowright:'right',d:'right'}[k];if(dir)keys[dir]=false});
+window.addEventListener('blur',()=>{Object.keys(keys).forEach(k=>keys[k]=false)});
+resize();player.x=W/2;player.y=H/2;updateUI();requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
