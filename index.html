@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#080d18">
-  <link rel="manifest" href="/neon-snake/manifest.json">
+<link rel="manifest" href="/neon-snake/manifest.json">
 <title>Neon Snake Arcade</title>
 <style>
 :root{--neon:#00ff9c;--bg:#080d18;--panel:#111b2d;--border:#293d54}
@@ -25,9 +25,46 @@ button:active{transform:scale(.97)}
 button.primary{background:var(--neon);color:#06140e;border-color:var(--neon)}
 button:disabled{opacity:.4}
 .actions{display:flex;justify-content:center;flex-wrap:wrap;gap:7px;margin:7px 0 13px}
-.controls{display:grid;grid-template-columns:repeat(3,58px);justify-content:center;gap:7px;margin:13px auto 19px}
-.controls button{padding:12px 0;font-size:1.2rem}
-.empty{visibility:hidden}
+
+/* NEUE GROSSE TOUCH-STEUERUNG */
+.controls{
+  display:grid;
+  grid-template-columns:repeat(3,min(76px,22vw));
+  grid-template-rows:repeat(2,68px);
+  justify-content:center;
+  gap:10px;
+  margin:18px auto 24px;
+  width:max-content;
+  touch-action:manipulation;
+}
+.controls button{
+  width:100%;
+  height:68px;
+  min-width:0;
+  padding:0;
+  font-size:clamp(1.7rem,7vw,2.2rem);
+  line-height:1;
+  border:2px solid #00ff9c80;
+  border-radius:16px;
+  background:linear-gradient(145deg,#193b43,#102536);
+  color:var(--neon);
+  box-shadow:0 0 12px #00ff9c20,inset 0 0 8px #00ff9c10;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.controls button:active{
+  transform:scale(.94);
+  background:#00ff9c;
+  color:#06140e;
+  box-shadow:0 0 20px #00ff9c80;
+}
+.controls .empty{
+  visibility:hidden;
+  pointer-events:none;
+  border:0;
+  box-shadow:none;
+}
 h2{color:var(--neon);font-size:1.1rem;margin:0 0 12px}
 .section{margin-top:13px;text-align:left}
 .section h2{text-align:left}
@@ -68,10 +105,10 @@ h2{color:var(--neon);font-size:1.1rem;margin:0 0 12px}
   <button id="statsBtn">📊 Statistik</button>
 </div>
 
-<div class="controls">
-  <button class="empty" tabindex="-1"> </button>
+<div class="controls" aria-label="Große Touch-Steuerung">
+  <button class="empty" tabindex="-1" aria-hidden="true"></button>
   <button data-dir="up" aria-label="Nach oben">⬆️</button>
-  <button class="empty" tabindex="-1"> </button>
+  <button class="empty" tabindex="-1" aria-hidden="true"></button>
   <button data-dir="left" aria-label="Nach links">⬅️</button>
   <button data-dir="down" aria-label="Nach unten">⬇️</button>
   <button data-dir="right" aria-label="Nach rechts">➡️</button>
@@ -87,7 +124,8 @@ h2{color:var(--neon);font-size:1.1rem;margin:0 0 12px}
   <h2>🏆 Bestenliste – Top 5</h2>
   <div id="leaderboard"></div>
 </section>
-<p class="muted">Steuerung: Bildschirmtasten, Wischen, Pfeiltasten oder WASD.<br>
+
+<p class="muted">Steuerung: Große Bildschirmtasten, Wischen, Pfeiltasten oder WASD.<br>
 Ein Apfel = 10 Punkte · Eine Münze = 5 Münzen im Shop.</p>
 </main>
 
@@ -186,11 +224,13 @@ function randomSpot(){
     p={x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)};
     tries++;
   }while((snake.some(s=>s.x===p.x&&s.y===p.y)||
-    (food&&p.x===food.x&&p.y===food.y))&&tries<500);
+    (food&&p.x===food.x&&p.y===food.y)||
+    (coin&&p.x===coin.x&&p.y===coin.y))&&tries<500);
   return p;
 }
 function placeFood(){food=randomSpot();}
 function placeCoin(){coin=randomSpot();}
+
 function renderShop(){
   const root=$("shop");root.replaceChildren();
   SKINS.forEach(s=>{
@@ -253,11 +293,9 @@ function draw(){
     ctx.beginPath();ctx.moveTo(0,i*CELL);ctx.lineTo(360,i*CELL);ctx.stroke();
   }
 
-  // Apfel
   ctx.save();ctx.shadowColor="#ff3864";ctx.shadowBlur=14;ctx.fillStyle="#ff3864";
   ctx.beginPath();ctx.arc(food.x*CELL+10,food.y*CELL+10,7,0,Math.PI*2);ctx.fill();ctx.restore();
 
-  // Goldene Münze
   ctx.save();ctx.shadowColor="#ffd34d";ctx.shadowBlur=17;
   ctx.fillStyle="#ffd34d";ctx.beginPath();
   ctx.arc(coin.x*CELL+10,coin.y*CELL+10,7,0,Math.PI*2);ctx.fill();
@@ -368,6 +406,7 @@ function showStats(){
   $("dialogPlay").textContent=paused?"▶ Weiter":"▶ Spielen";
   $("overlay").classList.remove("hidden");
 }
+
 $("start").addEventListener("click",()=>{
   if(running){stopTimer();running=false;paused=false;start();}
   else start();
@@ -389,12 +428,16 @@ $("dialogClose").addEventListener("click",()=>{
     $("dialogPlay").textContent="▶ Spiel starten";
   }
 });
+
+/* Große Richtungstasten */
 document.querySelectorAll("[data-dir]").forEach(btn=>{
   btn.addEventListener("click",()=>{
     if(!running&&!paused)start();
     if(running)changeDirection(btn.dataset.dir);
   });
 });
+
+/* Tastatursteuerung */
 document.addEventListener("keydown",e=>{
   const map={ArrowUp:"up",w:"up",W:"up",ArrowDown:"down",s:"down",S:"down",
     ArrowLeft:"left",a:"left",A:"left",ArrowRight:"right",d:"right",D:"right"};
@@ -408,14 +451,21 @@ document.addEventListener("keydown",e=>{
   }else if(e.key==="Escape"&&(running||paused))togglePause();
 });
 
+/* Wischsteuerung auf dem Spielfeld */
 let sx=0,sy=0;
-canvas.addEventListener("pointerdown",e=>{sx=e.clientX;sy=e.clientY;});
+canvas.addEventListener("pointerdown",e=>{
+  sx=e.clientX;sy=e.clientY;
+});
 canvas.addEventListener("pointerup",e=>{
   const dx=e.clientX-sx,dy=e.clientY-sy;
   if(Math.max(Math.abs(dx),Math.abs(dy))<18)return;
   if(!running&&!paused)start();
   if(!running)return;
-  changeDirection(Math.abs(dx)>Math.abs(dy)?(dx>0?"right":"left"):(dy>0?"down":"up"));
+  changeDirection(
+    Math.abs(dx)>Math.abs(dy)
+      ?(dx>0?"right":"left")
+      :(dy>0?"down":"up")
+  );
 });
 
 load();renderShop();renderLeaderboard();reset();
