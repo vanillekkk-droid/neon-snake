@@ -11,7 +11,6 @@
 :root {
   --neon:#00ffa5;
   --cyan:#00eaff;
-  --bg:#080d18;
 }
 
 * {
@@ -124,16 +123,17 @@ canvas {
   border:2px solid #55ffc2;
 }
 
-/* NEUES STEUERKREUZ */
+/* QUADRATISCHES STEUERKREUZ */
 
 .controller {
   position:relative;
   width:100%;
-  height:300px;
+  aspect-ratio:1 / 1;
+  height:auto;
   margin:12px auto 0;
   background:linear-gradient(145deg,#0b1927,#07101b);
   border:2px solid #087f65;
-  border-radius:27px;
+  border-radius:26px;
   box-shadow:
     inset 0 0 20px #00ffa522,
     0 0 12px #00ffa522;
@@ -141,7 +141,7 @@ canvas {
   touch-action:none;
 }
 
-/* Alle Tasten sind eigenständige Elemente */
+/* Jede Taste ist eine eigene Fläche */
 
 .key {
   position:absolute;
@@ -149,14 +149,14 @@ canvas {
   align-items:center;
   justify-content:center;
   padding:0;
-  color:white;
-  font-size:45px;
-  font-weight:bold;
-  background:#00efa0;
   border:0;
+  background:#00efa0;
+  color:white;
+  font-size:clamp(30px,8vw,48px);
+  font-weight:bold;
   cursor:pointer;
   touch-action:none;
-  filter:drop-shadow(0 0 8px #00ffa566);
+  filter:drop-shadow(0 0 7px #00ffa566);
 }
 
 .key::before {
@@ -170,7 +170,7 @@ canvas {
 .key span {
   position:relative;
   z-index:1;
-  text-shadow:0 0 8px #ffffff77;
+  text-shadow:0 0 8px #ffffff88;
 }
 
 .key:active {
@@ -181,78 +181,78 @@ canvas {
   background:#087b64;
 }
 
-/* OBEN */
+/* OBEN – EIGENES TRAPEZ */
 
 .key.up {
-  top:1%;
-  left:7%;
-  width:86%;
-  height:32%;
-  clip-path:polygon(0 0,100% 0,72% 100%,28% 100%);
+  top:2%;
+  left:4%;
+  width:92%;
+  height:31%;
+  clip-path:polygon(0 0,100% 0,70% 100%,30% 100%);
 }
 
 .key.up::before {
-  clip-path:polygon(1% 4%,99% 4%,71% 96%,29% 96%);
+  clip-path:polygon(1% 4%,99% 4%,69% 96%,31% 96%);
 }
 
-/* UNTEN */
+/* UNTEN – EIGENES TRAPEZ */
 
 .key.down {
-  bottom:1%;
-  left:7%;
-  width:86%;
-  height:32%;
-  clip-path:polygon(28% 0,72% 0,100% 100%,0 100%);
+  bottom:2%;
+  left:4%;
+  width:92%;
+  height:31%;
+  clip-path:polygon(30% 0,70% 0,100% 100%,0 100%);
 }
 
 .key.down::before {
-  clip-path:polygon(29% 4%,71% 4%,99% 96%,1% 96%);
+  clip-path:polygon(31% 4%,69% 4%,99% 96%,1% 96%);
 }
 
-/* LINKS */
+/* LINKS – EIGENES SEITENTEIL */
 
 .key.left {
-  left:1%;
-  top:34%;
+  left:2%;
+  top:35%;
   width:31%;
-  height:32%;
-  clip-path:polygon(0 0,100% 24%,100% 76%,0 100%);
+  height:30%;
+  clip-path:polygon(0 0,100% 25%,100% 75%,0 100%);
 }
 
 .key.left::before {
-  clip-path:polygon(3% 4%,97% 26%,97% 74%,3% 96%);
+  clip-path:polygon(4% 5%,96% 28%,96% 72%,4% 95%);
 }
 
-/* RECHTS */
+/* RECHTS – EIGENES SEITENTEIL */
 
 .key.right {
-  right:1%;
-  top:34%;
+  right:2%;
+  top:35%;
   width:31%;
-  height:32%;
-  clip-path:polygon(0 24%,100% 0,100% 100%,0 76%);
+  height:30%;
+  clip-path:polygon(0 25%,100% 0,100% 100%,0 75%);
 }
 
 .key.right::before {
-  clip-path:polygon(3% 26%,97% 4%,97% 96%,3% 74%);
+  clip-path:polygon(4% 28%,96% 5%,96% 95%,4% 72%);
 }
 
-/* MITTE */
+/* MITTE – START / PAUSE */
 
 .key.center {
   top:35%;
   left:35%;
   width:30%;
   height:30%;
-  border-radius:19px;
+  border-radius:18px;
   background:var(--cyan);
-  filter:drop-shadow(0 0 10px #00dfff88);
   font-size:40px;
+  filter:drop-shadow(0 0 10px #00dfff88);
 }
 
 .key.center::before {
   inset:4px;
-  border-radius:15px;
+  border-radius:14px;
   background:linear-gradient(145deg,#073b70,#102c55);
 }
 
@@ -304,93 +304,63 @@ footer {
   padding:15px;
 }
 
-@media(max-width:380px) {
-  .controller {height:270px;}
-  .key {font-size:37px;}
-  h1 {font-size:29px;}
-}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h1>🐍 Neon Snake</h1>
-  <div class="subtitle">ARCADE EDITION · EAT · COLLECT · UNLOCK</div>
+<h1>🐍 Neon Snake</h1>
+<div class="subtitle">ARCADE EDITION · EAT · COLLECT · UNLOCK</div>
 </header>
 
 <div class="stats">
-  <div class="stat">
-    <span>PUNKTE</span>
-    <strong id="score">0</strong>
-  </div>
-  <div class="stat">
-    <span>🪙 MÜNZEN</span>
-    <strong id="coins">0</strong>
-  </div>
-  <div class="stat">
-    <span>REKORD</span>
-    <strong id="record">0</strong>
-  </div>
+  <div class="stat"><span>PUNKTE</span><strong id="score">0</strong></div>
+  <div class="stat"><span>🪙 MÜNZEN</span><strong id="coins">0</strong></div>
+  <div class="stat"><span>REKORD</span><strong id="record">0</strong></div>
 </div>
 
 <div class="game-container">
-  <canvas id="game" width="360" height="360"></canvas>
+<canvas id="game" width="360" height="360"></canvas>
 </div>
 
 <div class="message" id="message">
-  Tippe auf Spielen oder eine Richtungstaste.
+Tippe auf Spielen oder eine Richtungstaste.
 </div>
 
 <div class="actions">
-  <button class="action play" id="startBtn">▶ Spielen</button>
-  <button class="action" id="soundBtn">🔊 Sound: An</button>
-  <button class="action" id="menuBtn">☰ Menü</button>
+<button class="action play" id="startBtn">▶ Spielen</button>
+<button class="action" id="soundBtn">🔊 Sound: An</button>
+<button class="action" id="menuBtn">☰ Menü</button>
 </div>
 
-<!-- STEUERUNG NACH DEINER SKIZZE -->
+<!-- DEIN NEUES QUADRATISCHES STEUERKREUZ -->
 
 <div class="controller">
 
-  <button class="key up" data-dir="up">
-    <span>↑</span>
-  </button>
+<button class="key up" data-dir="up"><span>↑</span></button>
 
-  <button class="key left" data-dir="left">
-    <span>←</span>
-  </button>
+<button class="key left" data-dir="left"><span>←</span></button>
 
-  <button class="key center" id="pauseBtn">
-    <span>▶</span>
-  </button>
+<button class="key center" id="pauseBtn"><span>▶</span></button>
 
-  <button class="key right" data-dir="right">
-    <span>→</span>
-  </button>
+<button class="key right" data-dir="right"><span>→</span></button>
 
-  <button class="key down" data-dir="down">
-    <span>↓</span>
-  </button>
+<button class="key down" data-dir="down"><span>↓</span></button>
 
 </div>
 
 <div class="panel" id="menuPanel">
-  <h2>🎮 Neon Snake Menü</h2>
-
-  <p>Äpfel: <strong id="apples">0</strong></p>
-  <p>Gespielte Runden: <strong id="rounds">0</strong></p>
-
-  <hr>
-
-  <h2>🏆 Bestenliste</h2>
-  <div id="leaderboard"></div>
-
-  <hr>
-
-  <h2>🎨 Skin Shop</h2>
-  <div class="skin-list" id="skinList"></div>
-
-  <button onclick="closeMenu()">Schließen</button>
+<h2>🎮 Neon Snake Menü</h2>
+<p>Äpfel: <strong id="apples">0</strong></p>
+<p>Gespielte Runden: <strong id="rounds">0</strong></p>
+<hr>
+<h2>🏆 Bestenliste</h2>
+<div id="leaderboard"></div>
+<hr>
+<h2>🎨 Skin Shop</h2>
+<div class="skin-list" id="skinList"></div>
+<button onclick="closeMenu()">Schließen</button>
 </div>
 
 <footer>NEON SNAKE ARCADE · HAVE FUN</footer>
@@ -398,39 +368,37 @@ footer {
 <script>
 "use strict";
 
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
-
 const $ = id => document.getElementById(id);
+const canvas=$("game");
+const ctx=canvas.getContext("2d");
 
 function getNumber(key,fallback) {
-  const value = localStorage.getItem(key);
-  const number = Number(value);
-  return value !== null && Number.isFinite(number)
-    ? number : fallback;
+  const value=localStorage.getItem(key);
+  const number=Number(value);
+  return value!==null && Number.isFinite(number)?number:fallback;
 }
 
 function getArray(key,fallback) {
   try {
-    const value = JSON.parse(localStorage.getItem(key));
-    return Array.isArray(value) ? value : fallback;
+    const value=JSON.parse(localStorage.getItem(key));
+    return Array.isArray(value)?value:fallback;
   } catch {
     return fallback;
   }
 }
 
-/* GESPEICHERTE DATEN */
+/* SPEICHER */
 
-let coins = getNumber("nsa_coins",0);
-let record = getNumber("neonSnakeHighscore",0);
-let apples = getNumber("nsa_apples",0);
-let rounds = getNumber("nsa_rounds",0);
+let coins=getNumber("nsa_coins",0);
+let record=getNumber("neonSnakeHighscore",0);
+let apples=getNumber("nsa_apples",0);
+let rounds=getNumber("nsa_rounds",0);
 
-let owned = getArray("nsa_owned",["green"]);
+let owned=getArray("nsa_owned",["green"]);
 if (!owned.includes("green")) owned.push("green");
 
-let selected = localStorage.getItem("nsa_selected") || "green";
-let scores = getArray("neonSnakeScores",[]);
+let selected=localStorage.getItem("nsa_selected")||"green";
+let scores=getArray("neonSnakeScores",[]);
 
 function save() {
   localStorage.setItem("nsa_coins",coins);
@@ -444,38 +412,36 @@ function save() {
 
 /* SKINS */
 
-const skins = [
-  {id:"green",name:"Neon Grün",color:"#00ff9c",price:0},
-  {id:"blue",name:"Electric Blau",color:"#00cfff",price:100},
-  {id:"purple",name:"Purple",color:"#bd65ff",price:200},
-  {id:"gold",name:"Gold",color:"#ffd34e",price:300},
-  {id:"pink",name:"Pink",color:"#ff3985",price:400},
-  {id:"ice",name:"Ice",color:"#b5f5ff",price:500}
+const skins=[
+{id:"green",name:"Neon Grün",color:"#00ff9c",price:0},
+{id:"blue",name:"Electric Blau",color:"#00cfff",price:100},
+{id:"purple",name:"Purple",color:"#bd65ff",price:200},
+{id:"gold",name:"Gold",color:"#ffd34e",price:300},
+{id:"pink",name:"Pink",color:"#ff3985",price:400},
+{id:"ice",name:"Ice",color:"#b5f5ff",price:500}
 ];
 
 function currentSkin() {
-  return skins.find(s=>s.id===selected) || skins[0];
+  return skins.find(s=>s.id===selected)||skins[0];
 }
 
 function renderShop() {
-  const list = $("skinList");
-  list.innerHTML = "";
+  const list=$("skinList");
+  list.innerHTML="";
 
   skins.forEach(skin=>{
-    const div = document.createElement("div");
-    div.className = "skin";
+    const div=document.createElement("div");
+    div.className="skin";
 
-    const name = document.createElement("strong");
-    name.style.color = skin.color;
-    name.textContent = skin.name;
+    const name=document.createElement("strong");
+    name.style.color=skin.color;
+    name.textContent=skin.name;
 
-    const button = document.createElement("button");
+    const button=document.createElement("button");
 
     if (owned.includes(skin.id)) {
-      button.textContent =
-        selected===skin.id ? "Ausgewählt ✓" : "Auswählen";
-
-      button.onclick = ()=>{
+      button.textContent=selected===skin.id?"Ausgewählt ✓":"Auswählen";
+      button.onclick=()=>{
         selected=skin.id;
         save();
         renderShop();
@@ -483,7 +449,6 @@ function renderShop() {
       };
     } else {
       button.textContent=skin.price+" Münzen";
-
       button.onclick=()=>{
         if (coins>=skin.price) {
           coins-=skin.price;
@@ -504,7 +469,7 @@ function renderShop() {
   });
 }
 
-/* SPIELZUSTAND */
+/* SPIEL */
 
 const SIZE=20;
 const CELLS=18;
@@ -512,9 +477,8 @@ const CELLS=18;
 let snake=[];
 let direction={x:1,y:0};
 let nextDirection={x:1,y:0};
-
 let apple={x:5,y:5};
-let coin={x:10,y:10};
+let coin={x:12,y:12};
 
 let score=0;
 let running=false;
@@ -530,9 +494,9 @@ function randomPosition() {
       y:Math.floor(Math.random()*CELLS)
     };
   } while (
-    snake.some(s=>s.x===pos.x && s.y===pos.y) ||
-    (apple.x===pos.x && apple.y===pos.y) ||
-    (coin.x===pos.x && coin.y===pos.y)
+    snake.some(s=>s.x===pos.x&&s.y===pos.y) ||
+    (apple.x===pos.x&&apple.y===pos.y) ||
+    (coin.x===pos.x&&coin.y===pos.y)
   );
 
   return pos;
@@ -547,12 +511,8 @@ function resetGame() {
 
   direction={x:1,y:0};
   nextDirection={x:1,y:0};
-
   score=0;
   gameOver=false;
-
-  apple={x:4,y:5};
-  coin={x:12,y:12};
 
   apple=randomPosition();
   coin=randomPosition();
@@ -596,7 +556,6 @@ function pauseGame() {
 
   $("startBtn").textContent="▶ Weiter";
   $("pauseBtn").querySelector("span").textContent="▶";
-
   $("message").textContent="Spiel pausiert";
 }
 
@@ -605,17 +564,13 @@ function toggleGame() {
   else startGame();
 }
 
-/* RICHTUNGEN */
-
 function setDirection(x,y) {
-  if (x===-direction.x && y===-direction.y) return;
+  if (x===-direction.x&&y===-direction.y) return;
 
   nextDirection={x,y};
 
   if (!running) startGame();
 }
-
-/* SPIELLOGIK */
 
 function tick() {
   direction=nextDirection;
@@ -625,20 +580,17 @@ function tick() {
     y:snake[0].y+direction.y
   };
 
-  if (
-    head.x<0 || head.x>=CELLS ||
-    head.y<0 || head.y>=CELLS
-  ) {
+  if (head.x<0||head.x>=CELLS||head.y<0||head.y>=CELLS) {
     endGame();
     return;
   }
 
-  const eatingApple=head.x===apple.x && head.y===apple.y;
-  const eatingCoin=head.x===coin.x && head.y===coin.y;
+  const eatingApple=head.x===apple.x&&head.y===apple.y;
+  const eatingCoin=head.x===coin.x&&head.y===coin.y;
 
-  const body=eatingApple ? snake : snake.slice(0,-1);
+  const body=eatingApple?snake:snake.slice(0,-1);
 
-  if (body.some(s=>s.x===head.x && s.y===head.y)) {
+  if (body.some(s=>s.x===head.x&&s.y===head.y)) {
     endGame();
     return;
   }
@@ -670,7 +622,6 @@ function tick() {
 function endGame() {
   running=false;
   gameOver=true;
-
   clearInterval(timer);
 
   scores.push(score);
@@ -682,8 +633,8 @@ function endGame() {
 
   $("startBtn").textContent="▶ Neu starten";
   $("pauseBtn").querySelector("span").textContent="▶";
-
   $("message").textContent="Spiel vorbei! Tippe auf Spielen.";
+
   playSound(180);
 }
 
@@ -691,14 +642,13 @@ function endGame() {
 
 function draw() {
   ctx.clearRect(0,0,360,360);
-
   ctx.fillStyle="#050b16";
   ctx.fillRect(0,0,360,360);
 
   ctx.strokeStyle="#111c2c";
   ctx.lineWidth=1;
 
-  for (let i=0;i<=360;i+=20) {
+  for(let i=0;i<=360;i+=20) {
     ctx.beginPath();
     ctx.moveTo(i,0);
     ctx.lineTo(i,360);
@@ -718,14 +668,8 @@ function draw() {
   snake.forEach((part,index)=>{
     ctx.shadowBlur=10;
     ctx.shadowColor=color;
-    ctx.fillStyle=index===0 ? "#ffffff" : color;
-
-    ctx.fillRect(
-      part.x*SIZE+1,
-      part.y*SIZE+1,
-      SIZE-3,
-      SIZE-3
-    );
+    ctx.fillStyle=index===0?"#ffffff":color;
+    ctx.fillRect(part.x*SIZE+1,part.y*SIZE+1,SIZE-3,SIZE-3);
   });
 
   ctx.shadowBlur=0;
@@ -736,11 +680,9 @@ function drawOrb(x,y,color) {
   ctx.shadowBlur=17;
   ctx.shadowColor=color;
   ctx.fillStyle=color;
-
   ctx.beginPath();
   ctx.arc(x*SIZE+10,y*SIZE+10,7,0,Math.PI*2);
   ctx.fill();
-
   ctx.restore();
 }
 
@@ -753,10 +695,10 @@ function playSound(frequency) {
   if (!soundOn) return;
 
   try {
-    audioContext=audioContext ||
-      new (window.AudioContext || window.webkitAudioContext)();
+    audioContext=audioContext||
+      new (window.AudioContext||window.webkitAudioContext)();
 
-    if (audioContext.state==="suspended") audioContext.resume();
+    if(audioContext.state==="suspended") audioContext.resume();
 
     const oscillator=audioContext.createOscillator();
     const gain=audioContext.createGain();
@@ -772,7 +714,7 @@ function playSound(frequency) {
   } catch(e) {}
 }
 
-/* TOUCH-STEUERUNG */
+/* TOUCH-TASTEN */
 
 document.querySelectorAll("[data-dir]").forEach(button=>{
   button.addEventListener("pointerdown",event=>{
@@ -780,10 +722,10 @@ document.querySelectorAll("[data-dir]").forEach(button=>{
 
     const dir=button.dataset.dir;
 
-    if (dir==="up") setDirection(0,-1);
-    if (dir==="down") setDirection(0,1);
-    if (dir==="left") setDirection(-1,0);
-    if (dir==="right") setDirection(1,0);
+    if(dir==="up") setDirection(0,-1);
+    if(dir==="down") setDirection(0,1);
+    if(dir==="left") setDirection(-1,0);
+    if(dir==="right") setDirection(1,0);
   });
 });
 
@@ -792,46 +734,39 @@ document.querySelectorAll("[data-dir]").forEach(button=>{
 document.addEventListener("keydown",event=>{
   const key=event.key.toLowerCase();
 
-  if ([
+  if([
     "arrowup","arrowdown","arrowleft","arrowright",
     "w","a","s","d"," "
   ].includes(key)) event.preventDefault();
 
   switch(key) {
     case "arrowup":
-    case "w": setDirection(0,-1); break;
-
+    case "w":setDirection(0,-1);break;
     case "arrowdown":
-    case "s": setDirection(0,1); break;
-
+    case "s":setDirection(0,1);break;
     case "arrowleft":
-    case "a": setDirection(-1,0); break;
-
+    case "a":setDirection(-1,0);break;
     case "arrowright":
-    case "d": setDirection(1,0); break;
-
-    case " ": toggleGame(); break;
+    case "d":setDirection(1,0);break;
+    case " ":toggleGame();break;
   }
 });
 
-/* BUTTONS */
+/* BEDIENUNG */
 
 $("startBtn").addEventListener("click",toggleGame);
 $("pauseBtn").addEventListener("click",toggleGame);
 
 $("soundBtn").addEventListener("click",()=>{
   soundOn=!soundOn;
-  $("soundBtn").textContent=soundOn
-    ? "🔊 Sound: An"
-    : "🔇 Sound: Aus";
+  $("soundBtn").textContent=soundOn?"🔊 Sound: An":"🔇 Sound: Aus";
 });
 
 $("menuBtn").addEventListener("click",()=>{
   const open=$("menuPanel").style.display==="block";
+  $("menuPanel").style.display=open?"none":"block";
 
-  $("menuPanel").style.display=open ? "none" : "block";
-
-  if (!open) {
+  if(!open) {
     renderShop();
     renderLeaderboard();
   }
@@ -845,7 +780,7 @@ function renderLeaderboard() {
   const board=$("leaderboard");
   board.innerHTML="";
 
-  if (!scores.length) {
+  if(!scores.length) {
     board.textContent="Noch keine Ergebnisse.";
     return;
   }
@@ -857,7 +792,7 @@ function renderLeaderboard() {
   });
 }
 
-/* WISCHEN */
+/* WISCHSTEUERUNG */
 
 let touchStartX=0;
 let touchStartY=0;
@@ -870,20 +805,19 @@ canvas.addEventListener("touchstart",event=>{
 
 canvas.addEventListener("touchend",event=>{
   const touch=event.changedTouches[0];
-
   const dx=touch.clientX-touchStartX;
   const dy=touch.clientY-touchStartY;
 
-  if (Math.abs(dx)<15 && Math.abs(dy)<15) return;
+  if(Math.abs(dx)<15&&Math.abs(dy)<15)return;
 
-  if (Math.abs(dx)>Math.abs(dy)) {
+  if(Math.abs(dx)>Math.abs(dy)) {
     setDirection(dx>0?1:-1,0);
   } else {
     setDirection(0,dy>0?1:-1);
   }
 },{passive:true});
 
-/* START */
+/* INITIALISIERUNG */
 
 resetGame();
 updateStats();
