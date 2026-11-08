@@ -29,9 +29,7 @@ body {
   overflow-x:hidden;
 }
 
-header {
-  margin:3px 0 12px;
-}
+header {margin:3px 0 12px;}
 
 h1 {
   color:var(--neon);
@@ -46,8 +44,6 @@ h1 {
   letter-spacing:2px;
   margin-top:5px;
 }
-
-/* STATISTIK */
 
 .stats {
   display:grid;
@@ -128,9 +124,7 @@ canvas {
   font-weight:bold;
 }
 
-.action:active {
-  transform:scale(.96);
-}
+.action:active {transform:scale(.96);}
 
 .action.play {
   background:var(--neon);
@@ -138,7 +132,7 @@ canvas {
   border:2px solid #55ffc2;
 }
 
-/* KOMPAKTES STEUERKREUZ */
+/* STEUERKREUZ */
 
 .controller {
   position:relative;
@@ -149,14 +143,10 @@ canvas {
   background:linear-gradient(145deg,#0b1927,#07101b);
   border:2px solid #087f65;
   border-radius:20px;
-  box-shadow:
-    inset 0 0 15px #00ffa522,
-    0 0 10px #00ffa522;
+  box-shadow:inset 0 0 15px #00ffa522,0 0 10px #00ffa522;
   overflow:hidden;
   touch-action:none;
 }
-
-/* ALLE TASTEN */
 
 .key {
   position:absolute;
@@ -224,40 +214,40 @@ canvas {
   clip-path:polygon(26% 5%,74% 5%,99% 95%,1% 95%);
 }
 
-/* LINKS */
+/* LINKS – BREITER UND STÄRKER SCHRÄG */
 
 .key.left {
-  left:2%;
-  top:35%;
-  width:28%;
-  height:30%;
-  clip-path:polygon(0 0,100% 25%,100% 75%,0 100%);
+  left:1%;
+  top:30%;
+  width:35%;
+  height:40%;
+  clip-path:polygon(0 0,100% 38%,100% 62%,0 100%);
 }
 
 .key.left::before {
-  clip-path:polygon(4% 6%,96% 29%,96% 71%,4% 94%);
+  clip-path:polygon(4% 5%,96% 40%,96% 60%,4% 95%);
 }
 
-/* RECHTS */
+/* RECHTS – BREITER UND STÄRKER SCHRÄG */
 
 .key.right {
-  right:2%;
-  top:35%;
-  width:28%;
-  height:30%;
-  clip-path:polygon(0 25%,100% 0,100% 100%,0 75%);
+  right:1%;
+  top:30%;
+  width:35%;
+  height:40%;
+  clip-path:polygon(0 38%,100% 0,100% 100%,0 62%);
 }
 
 .key.right::before {
-  clip-path:polygon(4% 29%,96% 6%,96% 94%,4% 71%);
+  clip-path:polygon(4% 40%,96% 5%,96% 95%,4% 60%);
 }
 
 /* MITTE */
 
 .key.center {
   top:35%;
-  left:36%;
-  width:28%;
+  left:37%;
+  width:26%;
   height:30%;
   border-radius:12px;
   background:var(--cyan);
@@ -312,9 +302,7 @@ canvas {
   text-align:center;
 }
 
-.skin button {
-  width:100%;
-}
+.skin button {width:100%;}
 
 footer {
   color:#64758a;
@@ -323,26 +311,11 @@ footer {
 }
 
 @media(max-width:380px) {
-  h1 {
-    font-size:28px;
-  }
-
-  .stat strong {
-    font-size:22px;
-  }
-
-  .action {
-    font-size:12px;
-    padding:12px 1px;
-  }
-
-  .controller {
-    height:160px;
-  }
-
-  .key {
-    font-size:26px;
-  }
+  h1 {font-size:28px;}
+  .stat strong {font-size:22px;}
+  .action {font-size:12px;padding:12px 1px;}
+  .controller {height:160px;}
+  .key {font-size:26px;}
 }
 </style>
 </head>
@@ -350,86 +323,67 @@ footer {
 <body>
 
 <header>
-  <h1>🐍 Neon Snake</h1>
-  <div class="subtitle">ARCADE EDITION · EAT · COLLECT · UNLOCK</div>
+<h1>🐍 Neon Snake</h1>
+<div class="subtitle">ARCADE EDITION · EAT · COLLECT · UNLOCK</div>
 </header>
 
 <div class="stats">
-  <div class="stat">
-    <span>PUNKTE</span>
-    <strong id="score">0</strong>
-  </div>
-
-  <div class="stat">
-    <span>🪙 MÜNZEN</span>
-    <strong id="coins">0</strong>
-  </div>
-
-  <div class="stat">
-    <span>REKORD</span>
-    <strong id="record">0</strong>
-  </div>
+<div class="stat"><span>PUNKTE</span><strong id="score">0</strong></div>
+<div class="stat"><span>🪙 MÜNZEN</span><strong id="coins">0</strong></div>
+<div class="stat"><span>REKORD</span><strong id="record">0</strong></div>
 </div>
 
 <div class="game-container">
-  <canvas id="game" width="360" height="360"></canvas>
+<canvas id="game" width="360" height="360"></canvas>
 </div>
 
 <div class="message" id="message">
-  Tippe auf Spielen oder eine Richtungstaste.
+Tippe auf Spielen oder eine Richtungstaste.
 </div>
 
 <div class="actions">
-  <button class="action play" id="startBtn">▶ Spielen</button>
-  <button class="action" id="soundBtn">🔊 Sound: An</button>
-  <button class="action" id="menuBtn">☰ Menü</button>
+<button class="action play" id="startBtn">▶ Spielen</button>
+<button class="action" id="soundBtn">🔊 Sound: An</button>
+<button class="action" id="menuBtn">☰ Menü</button>
 </div>
 
-<!-- KOMPAKTE STEUERUNG -->
+<!-- STEUERUNG -->
 
 <div class="controller">
 
-  <button class="key up" data-dir="up">
-    <span>↑</span>
-  </button>
+<button class="key up" data-dir="up">
+<span>↑</span>
+</button>
 
-  <button class="key left" data-dir="left">
-    <span>←</span>
-  </button>
+<button class="key left" data-dir="left">
+<span>←</span>
+</button>
 
-  <button class="key center" id="pauseBtn">
-    <span>▶</span>
-  </button>
+<button class="key center" id="pauseBtn">
+<span>▶</span>
+</button>
 
-  <button class="key right" data-dir="right">
-    <span>→</span>
-  </button>
+<button class="key right" data-dir="right">
+<span>→</span>
+</button>
 
-  <button class="key down" data-dir="down">
-    <span>↓</span>
-  </button>
+<button class="key down" data-dir="down">
+<span>↓</span>
+</button>
 
 </div>
 
 <div class="panel" id="menuPanel">
-
-  <h2>🎮 Neon Snake Menü</h2>
-
-  <p>Äpfel: <strong id="apples">0</strong></p>
-  <p>Gespielte Runden: <strong id="rounds">0</strong></p>
-
-  <hr>
-
-  <h2>🏆 Bestenliste</h2>
-  <div id="leaderboard"></div>
-
-  <hr>
-
-  <h2>🎨 Skin Shop</h2>
-  <div class="skin-list" id="skinList"></div>
-
-  <button onclick="closeMenu()">Schließen</button>
-
+<h2>🎮 Neon Snake Menü</h2>
+<p>Äpfel: <strong id="apples">0</strong></p>
+<p>Gespielte Runden: <strong id="rounds">0</strong></p>
+<hr>
+<h2>🏆 Bestenliste</h2>
+<div id="leaderboard"></div>
+<hr>
+<h2>🎨 Skin Shop</h2>
+<div class="skin-list" id="skinList"></div>
+<button onclick="closeMenu()">Schließen</button>
 </div>
 
 <footer>NEON SNAKE ARCADE · HAVE FUN</footer>
@@ -438,17 +392,13 @@ footer {
 "use strict";
 
 const $ = id => document.getElementById(id);
-const canvas = $("game");
-const ctx = canvas.getContext("2d");
-
-/* SPEICHERFUNKTIONEN */
+const canvas=$("game");
+const ctx=canvas.getContext("2d");
 
 function getNumber(key,fallback) {
   const value=localStorage.getItem(key);
   const number=Number(value);
-
-  return value!==null && Number.isFinite(number)
-    ? number : fallback;
+  return value!==null&&Number.isFinite(number)?number:fallback;
 }
 
 function getArray(key,fallback) {
@@ -460,7 +410,7 @@ function getArray(key,fallback) {
   }
 }
 
-/* GESPEICHERTE DATEN */
+/* SPEICHER */
 
 let coins=getNumber("nsa_coins",0);
 let record=getNumber("neonSnakeHighscore",0);
@@ -468,7 +418,6 @@ let apples=getNumber("nsa_apples",0);
 let rounds=getNumber("nsa_rounds",0);
 
 let owned=getArray("nsa_owned",["green"]);
-
 if(!owned.includes("green")) owned.push("green");
 
 let selected=localStorage.getItem("nsa_selected")||"green";
@@ -487,12 +436,12 @@ function save() {
 /* SKINS */
 
 const skins=[
-  {id:"green",name:"Neon Grün",color:"#00ff9c",price:0},
-  {id:"blue",name:"Electric Blau",color:"#00cfff",price:100},
-  {id:"purple",name:"Purple",color:"#bd65ff",price:200},
-  {id:"gold",name:"Gold",color:"#ffd34e",price:300},
-  {id:"pink",name:"Pink",color:"#ff3985",price:400},
-  {id:"ice",name:"Ice",color:"#b5f5ff",price:500}
+{id:"green",name:"Neon Grün",color:"#00ff9c",price:0},
+{id:"blue",name:"Electric Blau",color:"#00cfff",price:100},
+{id:"purple",name:"Purple",color:"#bd65ff",price:200},
+{id:"gold",name:"Gold",color:"#ffd34e",price:300},
+{id:"pink",name:"Pink",color:"#ff3985",price:400},
+{id:"ice",name:"Ice",color:"#b5f5ff",price:500}
 ];
 
 function currentSkin() {
@@ -514,8 +463,7 @@ function renderShop() {
     const button=document.createElement("button");
 
     if(owned.includes(skin.id)) {
-      button.textContent=selected===skin.id
-        ?"Ausgewählt ✓":"Auswählen";
+      button.textContent=selected===skin.id?"Ausgewählt ✓":"Auswählen";
 
       button.onclick=()=>{
         selected=skin.id;
@@ -531,7 +479,6 @@ function renderShop() {
           coins-=skin.price;
           owned.push(skin.id);
           selected=skin.id;
-
           save();
           updateStats();
           renderShop();
@@ -547,7 +494,7 @@ function renderShop() {
   });
 }
 
-/* SPIELZUSTAND */
+/* SPIEL */
 
 const SIZE=20;
 const CELLS=18;
@@ -555,7 +502,6 @@ const CELLS=18;
 let snake=[];
 let direction={x:1,y:0};
 let nextDirection={x:1,y:0};
-
 let apple={x:5,y:5};
 let coin={x:12,y:12};
 
@@ -563,8 +509,6 @@ let score=0;
 let running=false;
 let gameOver=false;
 let timer=null;
-
-/* ZUFALLSPOSITION */
 
 function randomPosition() {
   let pos;
@@ -575,15 +519,13 @@ function randomPosition() {
       y:Math.floor(Math.random()*CELLS)
     };
   } while(
-    snake.some(s=>s.x===pos.x&&s.y===pos.y) ||
-    (apple.x===pos.x&&apple.y===pos.y) ||
+    snake.some(s=>s.x===pos.x&&s.y===pos.y)||
+    (apple.x===pos.x&&apple.y===pos.y)||
     (coin.x===pos.x&&coin.y===pos.y)
   );
 
   return pos;
 }
-
-/* NEUES SPIEL */
 
 function resetGame() {
   snake=[
@@ -594,7 +536,6 @@ function resetGame() {
 
   direction={x:1,y:0};
   nextDirection={x:1,y:0};
-
   score=0;
   gameOver=false;
 
@@ -608,8 +549,6 @@ function resetGame() {
   draw();
 }
 
-/* ANZEIGE */
-
 function updateStats() {
   $("score").textContent=score;
   $("coins").textContent=coins;
@@ -618,11 +557,8 @@ function updateStats() {
   $("rounds").textContent=rounds;
 }
 
-/* START UND PAUSE */
-
 function startGame() {
   if(running) return;
-
   if(gameOver) resetGame();
 
   running=true;
@@ -647,7 +583,6 @@ function pauseGame() {
 
   $("startBtn").textContent="▶ Weiter";
   $("pauseBtn").querySelector("span").textContent="▶";
-
   $("message").textContent="Spiel pausiert";
 }
 
@@ -655,8 +590,6 @@ function toggleGame() {
   if(running) pauseGame();
   else startGame();
 }
-
-/* RICHTUNGSSTEUERUNG */
 
 function setDirection(x,y) {
   if(x===-direction.x&&y===-direction.y) return;
@@ -676,19 +609,13 @@ function tick() {
     y:snake[0].y+direction.y
   };
 
-  if(
-    head.x<0 || head.x>=CELLS ||
-    head.y<0 || head.y>=CELLS
-  ) {
+  if(head.x<0||head.x>=CELLS||head.y<0||head.y>=CELLS) {
     endGame();
     return;
   }
 
-  const eatingApple=
-    head.x===apple.x&&head.y===apple.y;
-
-  const eatingCoin=
-    head.x===coin.x&&head.y===coin.y;
+  const eatingApple=head.x===apple.x&&head.y===apple.y;
+  const eatingCoin=head.x===coin.x&&head.y===coin.y;
 
   const body=eatingApple?snake:snake.slice(0,-1);
 
@@ -721,12 +648,9 @@ function tick() {
   draw();
 }
 
-/* GAME OVER */
-
 function endGame() {
   running=false;
   gameOver=true;
-
   clearInterval(timer);
 
   scores.push(score);
@@ -738,17 +662,15 @@ function endGame() {
 
   $("startBtn").textContent="▶ Neu starten";
   $("pauseBtn").querySelector("span").textContent="▶";
-
   $("message").textContent="Spiel vorbei! Tippe auf Spielen.";
 
   playSound(180);
 }
 
-/* SPIELFELD ZEICHNEN */
+/* ZEICHNEN */
 
 function draw() {
   ctx.clearRect(0,0,360,360);
-
   ctx.fillStyle="#050b16";
   ctx.fillRect(0,0,360,360);
 
@@ -776,13 +698,7 @@ function draw() {
     ctx.shadowBlur=10;
     ctx.shadowColor=color;
     ctx.fillStyle=index===0?"#ffffff":color;
-
-    ctx.fillRect(
-      part.x*SIZE+1,
-      part.y*SIZE+1,
-      SIZE-3,
-      SIZE-3
-    );
+    ctx.fillRect(part.x*SIZE+1,part.y*SIZE+1,SIZE-3,SIZE-3);
   });
 
   ctx.shadowBlur=0;
@@ -790,20 +706,11 @@ function draw() {
 
 function drawOrb(x,y,color) {
   ctx.save();
-
   ctx.shadowBlur=17;
   ctx.shadowColor=color;
   ctx.fillStyle=color;
-
   ctx.beginPath();
-  ctx.arc(
-    x*SIZE+10,
-    y*SIZE+10,
-    7,
-    0,
-    Math.PI*2
-  );
-
+  ctx.arc(x*SIZE+10,y*SIZE+10,7,0,Math.PI*2);
   ctx.fill();
   ctx.restore();
 }
@@ -820,9 +727,7 @@ function playSound(frequency) {
     audioContext=audioContext||
       new (window.AudioContext||window.webkitAudioContext)();
 
-    if(audioContext.state==="suspended") {
-      audioContext.resume();
-    }
+    if(audioContext.state==="suspended") audioContext.resume();
 
     const oscillator=audioContext.createOscillator();
     const gain=audioContext.createGain();
@@ -835,11 +740,10 @@ function playSound(frequency) {
 
     oscillator.start();
     oscillator.stop(audioContext.currentTime+0.09);
-
   } catch(e) {}
 }
 
-/* TOUCH-TASTEN */
+/* TOUCH */
 
 document.querySelectorAll("[data-dir]").forEach(button=>{
   button.addEventListener("pointerdown",event=>{
@@ -862,34 +766,18 @@ document.addEventListener("keydown",event=>{
   if([
     "arrowup","arrowdown","arrowleft","arrowright",
     "w","a","s","d"," "
-  ].includes(key)) {
-    event.preventDefault();
-  }
+  ].includes(key)) event.preventDefault();
 
   switch(key) {
     case "arrowup":
-    case "w":
-      setDirection(0,-1);
-      break;
-
+    case "w":setDirection(0,-1);break;
     case "arrowdown":
-    case "s":
-      setDirection(0,1);
-      break;
-
+    case "s":setDirection(0,1);break;
     case "arrowleft":
-    case "a":
-      setDirection(-1,0);
-      break;
-
+    case "a":setDirection(-1,0);break;
     case "arrowright":
-    case "d":
-      setDirection(1,0);
-      break;
-
-    case " ":
-      toggleGame();
-      break;
+    case "d":setDirection(1,0);break;
+    case " ":toggleGame();break;
   }
 });
 
@@ -900,17 +788,12 @@ $("pauseBtn").addEventListener("click",toggleGame);
 
 $("soundBtn").addEventListener("click",()=>{
   soundOn=!soundOn;
-
-  $("soundBtn").textContent=soundOn
-    ?"🔊 Sound: An"
-    :"🔇 Sound: Aus";
+  $("soundBtn").textContent=soundOn?"🔊 Sound: An":"🔇 Sound: Aus";
 });
 
 $("menuBtn").addEventListener("click",()=>{
   const open=$("menuPanel").style.display==="block";
-
-  $("menuPanel").style.display=open
-    ?"none":"block";
+  $("menuPanel").style.display=open?"none":"block";
 
   if(!open) {
     renderShop();
@@ -921,8 +804,6 @@ $("menuBtn").addEventListener("click",()=>{
 function closeMenu() {
   $("menuPanel").style.display="none";
 }
-
-/* BESTENLISTE */
 
 function renderLeaderboard() {
   const board=$("leaderboard");
@@ -935,25 +816,20 @@ function renderLeaderboard() {
 
   scores.forEach((value,index)=>{
     const row=document.createElement("p");
-
-    row.textContent=
-      (index+1)+". Platz: "+value+" Punkte";
-
+    row.textContent=(index+1)+". Platz: "+value+" Punkte";
     board.appendChild(row);
   });
 }
 
-/* WISCHSTEUERUNG */
+/* WISCHEN */
 
 let touchStartX=0;
 let touchStartY=0;
 
 canvas.addEventListener("touchstart",event=>{
   const touch=event.changedTouches[0];
-
   touchStartX=touch.clientX;
   touchStartY=touch.clientY;
-
 },{passive:true});
 
 canvas.addEventListener("touchend",event=>{
@@ -969,7 +845,6 @@ canvas.addEventListener("touchend",event=>{
   } else {
     setDirection(0,dy>0?1:-1);
   }
-
 },{passive:true});
 
 /* INITIALISIERUNG */
