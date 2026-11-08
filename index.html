@@ -11,6 +11,8 @@
 :root {
   --neon:#00ffa5;
   --cyan:#00eaff;
+  --bg:#080d18;
+  --panel:#122238;
 }
 
 * {
@@ -73,8 +75,6 @@ h1 {
   margin-top:2px;
 }
 
-/* SPIELFELD */
-
 .game-container {
   width:100%;
   max-width:430px;
@@ -102,8 +102,6 @@ canvas {
   font-size:15px;
   padding:5px;
 }
-
-/* AKTIONSBUTTONS */
 
 .actions {
   display:grid;
@@ -143,9 +141,7 @@ canvas {
   background:#07101b;
   border:2px solid #087f65;
   border-radius:20px;
-  box-shadow:
-    inset 0 0 15px #00ffa522,
-    0 0 10px #00ffa522;
+  box-shadow:inset 0 0 15px #00ffa522,0 0 10px #00ffa522;
   overflow:hidden;
   touch-action:none;
 }
@@ -162,7 +158,6 @@ canvas {
   color:white;
   font-size:29px;
   font-weight:bold;
-  filter:none;
   cursor:pointer;
   touch-action:none;
   z-index:1;
@@ -184,111 +179,39 @@ canvas {
   pointer-events:none;
 }
 
-.key:active::before {
-  background:#087b64;
-}
-
-/* OBERE TASTE */
+.key:active::before {background:#087b64;}
 
 .key.up {
-  clip-path:polygon(
-    0 0,
-    100% 0,
-    68% 36%,
-    32% 36%
-  );
+  clip-path:polygon(0 0,100% 0,68% 36%,32% 36%);
 }
-
 .key.up::before {
-  clip-path:polygon(
-    1% 2%,
-    99% 2%,
-    67% 34%,
-    33% 34%
-  );
+  clip-path:polygon(1% 2%,99% 2%,67% 34%,33% 34%);
 }
-
-.key.up span {
-  left:50%;
-  top:19%;
-}
-
-/* LINKE TASTE */
+.key.up span {left:50%;top:19%;}
 
 .key.left {
-  clip-path:polygon(
-    0 0,
-    37% 36%,
-    37% 64%,
-    0 100%
-  );
+  clip-path:polygon(0 0,37% 36%,37% 64%,0 100%);
 }
-
 .key.left::before {
-  clip-path:polygon(
-    2% 2%,
-    35% 37%,
-    35% 63%,
-    2% 98%
-  );
+  clip-path:polygon(2% 2%,35% 37%,35% 63%,2% 98%);
 }
-
-.key.left span {
-  left:16%;
-  top:50%;
-}
-
-/* RECHTE TASTE */
+.key.left span {left:16%;top:50%;}
 
 .key.right {
-  clip-path:polygon(
-    63% 36%,
-    100% 0,
-    100% 100%,
-    63% 64%
-  );
+  clip-path:polygon(63% 36%,100% 0,100% 100%,63% 64%);
 }
-
 .key.right::before {
-  clip-path:polygon(
-    65% 37%,
-    98% 2%,
-    98% 98%,
-    65% 63%
-  );
+  clip-path:polygon(65% 37%,98% 2%,98% 98%,65% 63%);
 }
-
-.key.right span {
-  left:84%;
-  top:50%;
-}
-
-/* UNTERE TASTE */
+.key.right span {left:84%;top:50%;}
 
 .key.down {
-  clip-path:polygon(
-    32% 64%,
-    68% 64%,
-    100% 100%,
-    0 100%
-  );
+  clip-path:polygon(32% 64%,68% 64%,100% 100%,0 100%);
 }
-
 .key.down::before {
-  clip-path:polygon(
-    33% 66%,
-    67% 66%,
-    99% 98%,
-    1% 98%
-  );
+  clip-path:polygon(33% 66%,67% 66%,99% 98%,1% 98%);
 }
-
-.key.down span {
-  left:50%;
-  top:81%;
-}
-
-/* MITTLERE PAUSE-TASTE */
+.key.down span {left:50%;top:81%;}
 
 .key.center {
   inset:36% auto auto 37%;
@@ -314,13 +237,13 @@ canvas {
   font-size:28px;
 }
 
-/* MENÜ UND SHOP */
+/* MENÜ */
 
 .panel {
   display:none;
   max-width:600px;
   margin:12px auto;
-  padding:15px;
+  padding:14px;
   background:#122238;
   border:1px solid #34506b;
   border-radius:16px;
@@ -330,32 +253,122 @@ canvas {
 .panel h2 {
   color:var(--neon);
   text-align:center;
+  font-size:20px;
 }
 
-.panel button {
+.panel h3 {
+  color:#a9c8df;
+  font-size:15px;
+  margin-bottom:8px;
+}
+
+.panel button,.panel select {
   background:#19344d;
   color:white;
   border:1px solid #3a617c;
   border-radius:10px;
-  padding:9px;
-  margin:4px;
+  padding:10px;
+  margin:3px;
+  font-size:13px;
 }
 
-.skin-list {
+.panel button:disabled {opacity:.45;}
+
+.panel-section {
+  border-top:1px solid #30465c;
+  padding-top:10px;
+  margin-top:12px;
+}
+
+.shop-grid {
   display:grid;
-  grid-template-columns:repeat(2,1fr);
+  grid-template-columns:repeat(2,minmax(0,1fr));
   gap:8px;
 }
 
-.skin {
-  padding:10px;
+.shop-item {
+  background:#0b1727;
   border:1px solid #39516a;
   border-radius:12px;
-  background:#0b1727;
+  padding:10px;
   text-align:center;
+  min-width:0;
 }
 
-.skin button {width:100%;}
+.shop-preview {
+  width:34px;
+  height:34px;
+  border-radius:9px;
+  margin:0 auto 7px;
+  box-shadow:0 0 14px currentColor;
+}
+
+.shop-item strong {
+  display:block;
+  font-size:13px;
+  margin-bottom:5px;
+}
+
+.shop-item small {
+  color:#a9b9ca;
+}
+
+.shop-item button {
+  width:100%;
+  margin-top:7px;
+}
+
+.mission {
+  background:#0b1727;
+  padding:10px;
+  border-radius:10px;
+  margin:7px 0;
+  font-size:13px;
+}
+
+.progress {
+  height:7px;
+  background:#263b50;
+  border-radius:10px;
+  overflow:hidden;
+  margin-top:7px;
+}
+
+.progress div {
+  height:100%;
+  background:var(--neon);
+  width:0;
+}
+
+.achievement {
+  padding:9px;
+  background:#0b1727;
+  border-radius:9px;
+  margin:6px 0;
+  font-size:13px;
+}
+
+.achievement.locked {opacity:.45;}
+
+.menu-tabs {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:4px;
+}
+
+.menu-tabs button {flex:1;min-width:85px;}
+
+.menu-tabs button.active {
+  background:#006b54;
+  border-color:var(--neon);
+}
+
+#powerStatus {
+  color:#ffe27a;
+  font-size:12px;
+  min-height:17px;
+}
 
 footer {
   color:#64758a;
@@ -369,6 +382,7 @@ footer {
   .action {font-size:12px;padding:12px 1px;}
   .controller {height:160px;}
   .key {font-size:25px;}
+  .panel {padding:10px;}
 }
 </style>
 </head>
@@ -376,10 +390,8 @@ footer {
 <body>
 
 <header>
-<h1>🐍 Neon Snake</h1>
-<div class="subtitle">
-ARCADE EDITION · EAT · COLLECT · UNLOCK
-</div>
+  <h1>🐍 Neon Snake</h1>
+  <div class="subtitle">ARCADE EDITION · EAT · COLLECT · UNLOCK</div>
 </header>
 
 <div class="stats">
@@ -402,111 +414,174 @@ ARCADE EDITION · EAT · COLLECT · UNLOCK
 </div>
 
 <div class="message" id="message">
-Tippe auf Spielen oder eine Richtungstaste.
+  Tippe auf Spielen oder eine Richtungstaste.
 </div>
+
+<div id="powerStatus"></div>
 
 <div class="actions">
-  <button class="action play" id="startBtn">
-    ▶ Spielen
-  </button>
-
-  <button class="action" id="soundBtn">
-    🔊 Sound: An
-  </button>
-
-  <button class="action" id="menuBtn">
-    ☰ Menü
-  </button>
+  <button class="action play" id="startBtn">▶ Spielen</button>
+  <button class="action" id="soundBtn">🔊 Sound: An</button>
+  <button class="action" id="menuBtn">☰ Menü</button>
 </div>
 
-<!-- STEUERKREUZ -->
-
 <div class="controller">
-
-  <button class="key up" data-dir="up">
-    <span>↑</span>
-  </button>
-
-  <button class="key left" data-dir="left">
-    <span>←</span>
-  </button>
-
-  <button class="key right" data-dir="right">
-    <span>→</span>
-  </button>
-
-  <button class="key down" data-dir="down">
-    <span>↓</span>
-  </button>
-
-  <button class="key center" id="pauseBtn">
-    <span>▶</span>
-  </button>
-
+  <button class="key up" data-dir="up"><span>↑</span></button>
+  <button class="key left" data-dir="left"><span>←</span></button>
+  <button class="key right" data-dir="right"><span>→</span></button>
+  <button class="key down" data-dir="down"><span>↓</span></button>
+  <button class="key center" id="pauseBtn"><span>▶</span></button>
 </div>
 
 <div class="panel" id="menuPanel">
 
-  <h2>🎮 Neon Snake Menü</h2>
+  <h2>🎮 NEON SNAKE ARCADE</h2>
 
-  <p>Äpfel: <strong id="apples">0</strong></p>
-  <p>Gespielte Runden: <strong id="rounds">0</strong></p>
+  <div class="menu-tabs">
+    <button class="active" data-tab="home">Übersicht</button>
+    <button data-tab="shop">Shop</button>
+    <button data-tab="missions">Missionen</button>
+    <button data-tab="achievements">Erfolge</button>
+  </div>
 
-  <hr>
+  <div id="tab-home" class="tab-content">
+    <div class="panel-section">
+      <h3>🎮 Spielmodus</h3>
+      <select id="modeSelect" style="width:100%">
+        <option value="classic">Klassisch</option>
+        <option value="time">Zeit-Modus (60 Sekunden)</option>
+        <option value="obstacle">Hindernis-Modus</option>
+        <option value="endless">Endlos-Modus</option>
+      </select>
+      <p style="font-size:12px;color:#a9b9ca" id="modeDescription">
+        Sammle Äpfel und Münzen. Vermeide Wände und deinen eigenen Körper.
+      </p>
+    </div>
 
-  <h2>🏆 Bestenliste</h2>
-  <div id="leaderboard"></div>
+    <div class="panel-section">
+      <h3>🎁 Tägliche Belohnung</h3>
+      <p id="dailyText" style="font-size:13px"></p>
+      <button id="dailyBtn">Belohnung abholen</button>
+    </div>
 
-  <hr>
+    <div class="panel-section">
+      <h3>🌌 Spielfeld-Design</h3>
+      <div id="boardShop" class="shop-grid"></div>
+    </div>
 
-  <h2>🎨 Skin Shop</h2>
-  <div class="skin-list" id="skinList"></div>
+    <div class="panel-section">
+      <h3>📊 Deine Statistiken</h3>
+      <p>Äpfel: <strong id="apples">0</strong></p>
+      <p>Runden: <strong id="rounds">0</strong></p>
+      <p>Gesamte Punkte: <strong id="totalPoints">0</strong></p>
+      <p>Freigeschaltete Erfolge: <strong id="achievementCount">0</strong></p>
+    </div>
+  </div>
 
-  <button onclick="closeMenu()">Schließen</button>
+  <div id="tab-shop" class="tab-content" style="display:none">
+    <div class="panel-section">
+      <h3>🐍 Schlangen-Skins</h3>
+      <div id="skinList" class="shop-grid"></div>
+    </div>
+  </div>
+
+  <div id="tab-missions" class="tab-content" style="display:none">
+    <div class="panel-section">
+      <h3>🏆 Deine Missionen</h3>
+      <div id="missionList"></div>
+    </div>
+  </div>
+
+  <div id="tab-achievements" class="tab-content" style="display:none">
+    <div class="panel-section">
+      <h3>🥇 Erfolge und Auszeichnungen</h3>
+      <div id="achievementList"></div>
+    </div>
+  </div>
+
+  <div class="panel-section">
+    <button id="closeMenuBtn" style="width:100%">Menü schließen</button>
+  </div>
 </div>
 
-<footer>
-NEON SNAKE ARCADE · HAVE FUN
-</footer>
+<footer>NEON SNAKE ARCADE · HAVE FUN</footer>
 
 <script>
 "use strict";
 
+/* =====================================================
+   NEON SNAKE ARCADE - ERWEITERTE VERSION
+   Bestehende Speicherstände bleiben erhalten.
+===================================================== */
+
 const $ = id => document.getElementById(id);
 
-const canvas=$("game");
-const ctx=canvas.getContext("2d");
+const canvas = $("game");
+const ctx = canvas.getContext("2d");
 
-/* SPEICHER */
+const SIZE = 20;
+const CELLS = 18;
+const WIDTH = 360;
+const HEIGHT = 360;
 
-function getNumber(key,fallback) {
-  const value=localStorage.getItem(key);
-  const number=Number(value);
+/* =====================================================
+   SPEICHER UND ALTE SPIELSTÄNDE
+===================================================== */
 
-  return value!==null && Number.isFinite(number)
-    ? number : fallback;
+function number(key,fallback) {
+  const v=localStorage.getItem(key);
+  const n=Number(v);
+  return v!==null && Number.isFinite(n) ? n : fallback;
 }
 
-function getArray(key,fallback) {
+function array(key,fallback) {
   try {
-    const value=JSON.parse(localStorage.getItem(key));
-    return Array.isArray(value)?value:fallback;
-  } catch {
+    const v=JSON.parse(localStorage.getItem(key));
+    return Array.isArray(v) ? v : fallback;
+  } catch(e) {
     return fallback;
   }
 }
 
-let coins=getNumber("nsa_coins",0);
-let record=getNumber("neonSnakeHighscore",0);
-let apples=getNumber("nsa_apples",0);
-let rounds=getNumber("nsa_rounds",0);
+function object(key,fallback) {
+  try {
+    const v=JSON.parse(localStorage.getItem(key));
+    return v && typeof v==="object" && !Array.isArray(v) ? v : fallback;
+  } catch(e) {
+    return fallback;
+  }
+}
 
-let owned=getArray("nsa_owned",["green"]);
+let coins=number("nsa_coins",0);
+let record=number("neonSnakeHighscore",0);
+let apples=number("nsa_apples",0);
+let rounds=number("nsa_rounds",0);
 
+let owned=array("nsa_owned",["green"]);
 if(!owned.includes("green")) owned.push("green");
 
-let selected=localStorage.getItem("nsa_selected")||"green";
-let scores=getArray("neonSnakeScores",[]);
+let selected=localStorage.getItem("nsa_selected") || "green";
+
+let scores=array("neonSnakeScores",[]);
+
+let totalPoints=number("nsa_totalPoints",0);
+let totalCoins=number("nsa_totalCoins",coins);
+let gamesWon=number("nsa_gamesWon",0);
+
+let ownedBoards=array("nsa_ownedBoards",["classic"]);
+let selectedBoard=localStorage.getItem("nsa_selectedBoard") || "classic";
+
+let achievements=object("nsa_achievements",{});
+let claimedMissions=object("nsa_claimedMissions",{});
+
+let dailyDate=localStorage.getItem("nsa_dailyDate") || "";
+let dailyStreak=number("nsa_dailyStreak",0);
+
+let soundOn=localStorage.getItem("nsa_sound")!=="false";
+
+let mode=localStorage.getItem("nsa_mode") || "classic";
+
+const today=()=>new Date().toLocaleDateString("en-CA");
 
 function save() {
   localStorage.setItem("nsa_coins",coins);
@@ -516,9 +591,23 @@ function save() {
   localStorage.setItem("nsa_owned",JSON.stringify(owned));
   localStorage.setItem("nsa_selected",selected);
   localStorage.setItem("neonSnakeScores",JSON.stringify(scores));
+
+  localStorage.setItem("nsa_totalPoints",totalPoints);
+  localStorage.setItem("nsa_totalCoins",totalCoins);
+  localStorage.setItem("nsa_gamesWon",gamesWon);
+  localStorage.setItem("nsa_ownedBoards",JSON.stringify(ownedBoards));
+  localStorage.setItem("nsa_selectedBoard",selectedBoard);
+  localStorage.setItem("nsa_achievements",JSON.stringify(achievements));
+  localStorage.setItem("nsa_claimedMissions",JSON.stringify(claimedMissions));
+  localStorage.setItem("nsa_dailyDate",dailyDate);
+  localStorage.setItem("nsa_dailyStreak",dailyStreak);
+  localStorage.setItem("nsa_sound",soundOn);
+  localStorage.setItem("nsa_mode",mode);
 }
 
-/* SKINS */
+/* =====================================================
+   SKINS
+===================================================== */
 
 const skins=[
   {id:"green",name:"Neon Grün",color:"#00ff9c",price:0},
@@ -526,473 +615,231 @@ const skins=[
   {id:"purple",name:"Purple",color:"#bd65ff",price:200},
   {id:"gold",name:"Gold",color:"#ffd34e",price:300},
   {id:"pink",name:"Pink",color:"#ff3985",price:400},
-  {id:"ice",name:"Ice",color:"#b5f5ff",price:500}
+  {id:"ice",name:"Ice",color:"#b5f5ff",price:500},
+  {id:"toxic",name:"Toxic",color:"#baff00",price:700},
+  {id:"cyber",name:"Cyber",color:"#ff4be8",price:900},
+  {id:"galaxy",name:"Galaxy",color:"#9365ff",price:1200},
+  {id:"rainbow",name:"Rainbow",color:"rainbow",price:1800},
+  {id:"diamond",name:"Diamond",color:"#a5ffff",price:2500},
+  {id:"fire",name:"Fire",color:"#ff712d",price:3000}
 ];
 
-function currentSkin() {
-  return skins.find(s=>s.id===selected)||skins[0];
+function skin() {
+  return skins.find(s=>s.id===selected) || skins[0];
 }
 
-function renderShop() {
-  const list=$("skinList");
+function skinColor(index) {
+  if(selected==="rainbow") {
+    return `hsl(${(Date.now()/8+index*24)%360},100%,65%)`;
+  }
+  return skin().color;
+}
+
+/* =====================================================
+   SPIELFELDER
+===================================================== */
+
+const boards=[
+  {id:"classic",name:"Neon Grid",price:0,bg:"#050b16",grid:"#142034",border:"#00ffa5"},
+  {id:"cyber",name:"Cyberpunk",price:500,bg:"#10091d",grid:"#452052",border:"#f43dff"},
+  {id:"ice",name:"Eiswelt",price:700,bg:"#071a2a",grid:"#1b4962",border:"#55dfff"},
+  {id:"synth",name:"Synthwave",price:1000,bg:"#17091c",grid:"#52204b",border:"#ff4da6"},
+  {id:"space",name:"Weltraum",price:1500,bg:"#08091b",grid:"#24285b",border:"#9c85ff"}
+];
+
+function board() {
+  return boards.find(b=>b.id===selectedBoard) || boards[0];
+}
+
+/* =====================================================
+   POWER-UPS
+===================================================== */
+
+const powerTypes=[
+  {id:"shield",name:"Schild",icon:"🛡️",color:"#53cfff",duration:8000},
+  {id:"magnet",name:"Magnet",icon:"🧲",color:"#ff65e8",duration:8000},
+  {id:"slow",name:"Zeitlupe",icon:"⏱️",color:"#ffe477",duration:6000},
+  {id:"double",name:"Doppelpunkte",icon:"💎",color:"#a78bff",duration:8000},
+  {id:"ghost",name:"Geist",icon:"👻",color:"#b9faff",duration:5000}
+];
+
+let powerup=null;
+let activePower=null;
+let powerUntil=0;
+let ticks=0;
+
+/* =====================================================
+   MISSIONEN
+===================================================== */
+
+const missions=[
+  {
+    id:"apple10",
+    name:"Apfel-Sammler",
+    description:"Sammle 10 Äpfel.",
+    target:10,
+    reward:100,
+    value:()=>apples
+  },
+  {
+    id:"score100",
+    name:"Punktejäger",
+    description:"Erreiche 100 Punkte in einer Runde.",
+    target:100,
+    reward:100,
+    value:()=>score
+  },
+  {
+    id:"coins50",
+    name:"Münzjäger",
+    description:"Sammle 50 Münzen.",
+    target:50,
+    reward:150,
+    value:()=>totalCoins
+  }
+];
+
+function missionProgress(m) {
+  return Math.min(m.target,m.value());
+}
+
+function renderMissions() {
+  const list=$("missionList");
   list.innerHTML="";
 
-  skins.forEach(skin=>{
-    const div=document.createElement("div");
-    div.className="skin";
+  missions.forEach(m=>{
+    const progress=missionProgress(m);
+    const done=progress>=m.target;
+    const claimed=!!claimedMissions[m.id];
 
-    const name=document.createElement("strong");
-    name.style.color=skin.color;
-    name.textContent=skin.name;
+    const div=document.createElement("div");
+    div.className="mission";
+
+    const title=document.createElement("strong");
+    title.textContent="🏆 "+m.name;
+
+    const desc=document.createElement("p");
+    desc.textContent=m.description+" ("+progress+"/"+m.target+")";
+
+    const bar=document.createElement("div");
+    bar.className="progress";
+
+    const fill=document.createElement("div");
+    fill.style.width=(progress/m.target*100)+"%";
+    bar.appendChild(fill);
 
     const button=document.createElement("button");
+    button.textContent=claimed?"Abgeholt ✓":done?"Belohnung abholen (+"+m.reward+")":"Noch nicht geschafft";
+    button.disabled=!done || claimed;
 
-    if(owned.includes(skin.id)) {
-      button.textContent=
-        selected===skin.id?"Ausgewählt ✓":"Auswählen";
-
-      button.onclick=()=>{
-        selected=skin.id;
+    button.onclick=()=>{
+      if(done && !claimed) {
+        coins+=m.reward;
+        totalCoins+=m.reward;
+        claimedMissions[m.id]=true;
         save();
-        renderShop();
-        draw();
-      };
-    } else {
-      button.textContent=skin.price+" Münzen";
+        renderAll();
+      }
+    };
 
-      button.onclick=()=>{
-        if(coins>=skin.price) {
-          coins-=skin.price;
-          owned.push(skin.id);
-          selected=skin.id;
-
-          save();
-          updateStats();
-          renderShop();
-          draw();
-        } else {
-          $("message").textContent="Nicht genügend Münzen!";
-        }
-      };
-    }
-
-    div.append(name,document.createElement("br"),button);
+    div.append(title,desc,bar,button);
     list.appendChild(div);
   });
 }
 
-/* SPIEL */
+/* =====================================================
+   ERFOLGE
+===================================================== */
 
-const SIZE=20;
-const CELLS=18;
+const achievementDefs=[
+  {id:"firstApple",name:"Erster Apfel",desc:"Sammle deinen ersten Apfel.",check:()=>apples>=1,reward:50},
+  {id:"apples50",name:"Apfel-Profi",desc:"Sammle 50 Äpfel.",check:()=>apples>=50,reward:150},
+  {id:"score100",name:"Punktejäger",desc:"Erreiche 100 Punkte in einer Runde.",check:()=>record>=100,reward:100},
+  {id:"score250",name:"Arcade-Legende",desc:"Erreiche 250 Punkte in einer Runde.",check:()=>record>=250,reward:300},
+  {id:"coins500",name:"Münzsammler",desc:"Sammle insgesamt 500 Münzen.",check:()=>totalCoins>=500,reward:100},
+  {id:"games10",name:"Stammspieler",desc:"Starte 10 Runden.",check:()=>rounds>=10,reward:150},
+  {id:"games50",name:"Snake-Veteran",desc:"Starte 50 Runden.",check:()=>rounds>=50,reward:400},
+  {id:"skins5",name:"Mode-Experte",desc:"Besitze 5 Skins.",check:()=>owned.length>=5,reward:200},
+  {id:"boards3",name:"Weltenbummler",desc:"Besitze 3 Spielfelder.",check:()=>ownedBoards.length>=3,reward:200}
+];
+
+function checkAchievements() {
+  achievementDefs.forEach(a=>{
+    if(a.check() && !achievements[a.id]) {
+      achievements[a.id]=true;
+      coins+=a.reward;
+      totalCoins+=a.reward;
+      $("message").textContent="🏆 Erfolg: "+a.name+" (+"+a.reward+" Münzen)";
+      save();
+    }
+  });
+}
+
+function renderAchievements() {
+  const list=$("achievementList");
+  list.innerHTML="";
+
+  achievementDefs.forEach(a=>{
+    const unlocked=!!achievements[a.id];
+
+    const div=document.createElement("div");
+    div.className="achievement"+(unlocked?"":" locked");
+
+    div.textContent=
+      (unlocked?"🏆 ":"🔒 ")+a.name+" – "+a.desc+
+      (unlocked?" ✓":" · Belohnung: "+a.reward+" Münzen");
+
+    list.appendChild(div);
+  });
+
+  $("achievementCount").textContent=
+    achievementDefs.filter(a=>achievements[a.id]).length+
+    "/"+achievementDefs.length;
+}
+
+/* =====================================================
+   TÄGLICHE BELOHNUNG
+===================================================== */
+
+function dailyStatus() {
+  const last=dailyDate;
+  const current=today();
+
+  const available=last!==current;
+
+  $("dailyText").textContent=
+    "Serie: "+dailyStreak+" Tage. Heute gibt es Münzen für dich!";
+
+  $("dailyBtn").disabled=!available;
+  $("dailyBtn").textContent=
+    available?"🎁 Belohnung abholen":"✓ Heute bereits abgeholt";
+}
+
+$("dailyBtn").addEventListener("click",()=>{
+  if(dailyDate===today()) return;
+
+  const previous=new Date();
+  previous.setDate(previous.getDate()-1);
+
+  const yesterday=previous.toLocaleDateString("en-CA");
+
+  dailyStreak=dailyDate===yesterday?dailyStreak+1:1;
+
+  const reward=Math.min(100+dailyStreak*25,500);
+
+  coins+=reward;
+  totalCoins+=reward;
+  dailyDate=today();
+
+  save();
+  $("message").textContent="🎁 Tagesbelohnung: +"+reward+" Münzen!";
+  renderAll();
+});
+
+/* =====================================================
+   SPIELZUSTAND
+===================================================== */
 
 let snake=[];
 let direction={x:1,y:0};
-let nextDirection={x:1,y:0};
-
-let apple={x:5,y:5};
-let coin={x:12,y:12};
-
-let score=0;
-let running=false;
-let gameOver=false;
-let timer=null;
-
-function randomPosition() {
-  let pos;
-
-  do {
-    pos={
-      x:Math.floor(Math.random()*CELLS),
-      y:Math.floor(Math.random()*CELLS)
-    };
-  } while(
-    snake.some(s=>s.x===pos.x&&s.y===pos.y) ||
-    (apple.x===pos.x&&apple.y===pos.y) ||
-    (coin.x===pos.x&&coin.y===pos.y)
-  );
-
-  return pos;
-}
-
-function resetGame() {
-  snake=[
-    {x:8,y:9},
-    {x:7,y:9},
-    {x:6,y:9}
-  ];
-
-  direction={x:1,y:0};
-  nextDirection={x:1,y:0};
-
-  score=0;
-  gameOver=false;
-
-  apple={x:4,y:5};
-  coin={x:12,y:12};
-
-  apple=randomPosition();
-  coin=randomPosition();
-
-  updateStats();
-  draw();
-}
-
-function updateStats() {
-  $("score").textContent=score;
-  $("coins").textContent=coins;
-  $("record").textContent=record;
-  $("apples").textContent=apples;
-  $("rounds").textContent=rounds;
-}
-
-function startGame() {
-  if(running) return;
-
-  if(gameOver) resetGame();
-
-  running=true;
-  rounds++;
-
-  save();
-
-  $("message").textContent="Viel Spaß!";
-  $("startBtn").textContent="Ⅱ Pause";
-  $("pauseBtn").querySelector("span").textContent="Ⅱ";
-
-  updateStats();
-
-  clearInterval(timer);
-  timer=setInterval(tick,145);
-}
-
-function pauseGame() {
-  if(!running) return;
-
-  running=false;
-  clearInterval(timer);
-
-  $("startBtn").textContent="▶ Weiter";
-  $("pauseBtn").querySelector("span").textContent="▶";
-  $("message").textContent="Spiel pausiert";
-}
-
-function toggleGame() {
-  if(running) pauseGame();
-  else startGame();
-}
-
-function setDirection(x,y) {
-  if(x===-direction.x && y===-direction.y) return;
-
-  nextDirection={x,y};
-
-  if(!running) startGame();
-}
-
-/* SPIELLOGIK */
-
-function tick() {
-  direction=nextDirection;
-
-  const head={
-    x:snake[0].x+direction.x,
-    y:snake[0].y+direction.y
-  };
-
-  if(
-    head.x<0 || head.x>=CELLS ||
-    head.y<0 || head.y>=CELLS
-  ) {
-    endGame();
-    return;
-  }
-
-  const eatingApple=
-    head.x===apple.x && head.y===apple.y;
-
-  const eatingCoin=
-    head.x===coin.x && head.y===coin.y;
-
-  const body=eatingApple
-    ? snake
-    : snake.slice(0,-1);
-
-  if(body.some(s=>s.x===head.x&&s.y===head.y)) {
-    endGame();
-    return;
-  }
-
-  snake.unshift(head);
-
-  if(eatingApple) {
-    score+=10;
-    apples++;
-    apple=randomPosition();
-    playSound(600);
-  } else {
-    snake.pop();
-  }
-
-  if(eatingCoin) {
-    coins+=5;
-    coin=randomPosition();
-    playSound(900);
-  }
-
-  if(score>record) record=score;
-
-  updateStats();
-  save();
-  draw();
-}
-
-function endGame() {
-  running=false;
-  gameOver=true;
-
-  clearInterval(timer);
-
-  scores.push(score);
-  scores.sort((a,b)=>b-a);
-  scores.splice(5);
-
-  save();
-  updateStats();
-
-  $("startBtn").textContent="▶ Neu starten";
-  $("pauseBtn").querySelector("span").textContent="▶";
-
-  $("message").textContent=
-    "Spiel vorbei! Tippe auf Spielen.";
-
-  playSound(180);
-}
-
-/* ZEICHNEN */
-
-function draw() {
-  ctx.clearRect(0,0,360,360);
-
-  ctx.fillStyle="#050b16";
-  ctx.fillRect(0,0,360,360);
-
-  ctx.strokeStyle="#111c2c";
-  ctx.lineWidth=1;
-
-  for(let i=0;i<=360;i+=20) {
-    ctx.beginPath();
-    ctx.moveTo(i,0);
-    ctx.lineTo(i,360);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(0,i);
-    ctx.lineTo(360,i);
-    ctx.stroke();
-  }
-
-  drawOrb(apple.x,apple.y,"#ff3270");
-  drawOrb(coin.x,coin.y,"#ffd447");
-
-  const color=currentSkin().color;
-
-  snake.forEach((part,index)=>{
-    ctx.shadowBlur=10;
-    ctx.shadowColor=color;
-
-    ctx.fillStyle=index===0?"#ffffff":color;
-
-    ctx.fillRect(
-      part.x*SIZE+1,
-      part.y*SIZE+1,
-      SIZE-3,
-      SIZE-3
-    );
-  });
-
-  ctx.shadowBlur=0;
-}
-
-function drawOrb(x,y,color) {
-  ctx.save();
-
-  ctx.shadowBlur=17;
-  ctx.shadowColor=color;
-  ctx.fillStyle=color;
-
-  ctx.beginPath();
-  ctx.arc(x*SIZE+10,y*SIZE+10,7,0,Math.PI*2);
-  ctx.fill();
-
-  ctx.restore();
-}
-
-/* SOUND */
-
-let audioContext=null;
-let soundOn=true;
-
-function playSound(frequency) {
-  if(!soundOn) return;
-
-  try {
-    audioContext=audioContext ||
-      new (window.AudioContext||window.webkitAudioContext)();
-
-    if(audioContext.state==="suspended") {
-      audioContext.resume();
-    }
-
-    const oscillator=audioContext.createOscillator();
-    const gain=audioContext.createGain();
-
-    oscillator.frequency.value=frequency;
-    gain.gain.value=0.06;
-
-    oscillator.connect(gain);
-    gain.connect(audioContext.destination);
-
-    oscillator.start();
-    oscillator.stop(audioContext.currentTime+0.09);
-  } catch(e) {}
-}
-
-/* TOUCH-STEUERUNG */
-
-document.querySelectorAll("[data-dir]").forEach(button=>{
-  button.addEventListener("pointerdown",event=>{
-    event.preventDefault();
-
-    const dir=button.dataset.dir;
-
-    if(dir==="up") setDirection(0,-1);
-    if(dir==="down") setDirection(0,1);
-    if(dir==="left") setDirection(-1,0);
-    if(dir==="right") setDirection(1,0);
-  });
-});
-
-/* TASTATUR */
-
-document.addEventListener("keydown",event=>{
-  const key=event.key.toLowerCase();
-
-  if([
-    "arrowup","arrowdown","arrowleft","arrowright",
-    "w","a","s","d"," "
-  ].includes(key)) {
-    event.preventDefault();
-  }
-
-  switch(key) {
-    case "arrowup":
-    case "w":
-      setDirection(0,-1);
-      break;
-
-    case "arrowdown":
-    case "s":
-      setDirection(0,1);
-      break;
-
-    case "arrowleft":
-    case "a":
-      setDirection(-1,0);
-      break;
-
-    case "arrowright":
-    case "d":
-      setDirection(1,0);
-      break;
-
-    case " ":
-      toggleGame();
-      break;
-  }
-});
-
-/* BUTTONS */
-
-$("startBtn").addEventListener("click",toggleGame);
-$("pauseBtn").addEventListener("click",toggleGame);
-
-$("soundBtn").addEventListener("click",()=>{
-  soundOn=!soundOn;
-
-  $("soundBtn").textContent=
-    soundOn?"🔊 Sound: An":"🔇 Sound: Aus";
-});
-
-$("menuBtn").addEventListener("click",()=>{
-  const open=$("menuPanel").style.display==="block";
-
-  $("menuPanel").style.display=
-    open?"none":"block";
-
-  if(!open) {
-    renderShop();
-    renderLeaderboard();
-  }
-});
-
-function closeMenu() {
-  $("menuPanel").style.display="none";
-}
-
-function renderLeaderboard() {
-  const board=$("leaderboard");
-  board.innerHTML="";
-
-  if(!scores.length) {
-    board.textContent="Noch keine Ergebnisse.";
-    return;
-  }
-
-  scores.forEach((value,index)=>{
-    const row=document.createElement("p");
-
-    row.textContent=
-      (index+1)+". Platz: "+value+" Punkte";
-
-    board.appendChild(row);
-  });
-}
-
-/* WISCHSTEUERUNG */
-
-let touchStartX=0;
-let touchStartY=0;
-
-canvas.addEventListener("touchstart",event=>{
-  const touch=event.changedTouches[0];
-
-  touchStartX=touch.clientX;
-  touchStartY=touch.clientY;
-},{passive:true});
-
-canvas.addEventListener("touchend",event=>{
-  const touch=event.changedTouches[0];
-
-  const dx=touch.clientX-touchStartX;
-  const dy=touch.clientY-touchStartY;
-
-  if(Math.abs(dx)<15 && Math.abs(dy)<15) return;
-
-  if(Math.abs(dx)>Math.abs(dy)) {
-    setDirection(dx>0?1:-1,0);
-  } else {
-    setDirection(0,dy>0?1:-1);
-  }
-},{passive:true});
-
-/* INITIALISIERUNG */
-
-resetGame();
-updateStats();
-renderShop();
-draw();
-
-</script>
-</body>
-</html>
+let nextDirectio
